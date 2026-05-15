@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx claude-code-templates@latest *)"
+    ]
+  },
+  "enabledPlugins": {
+    "stripe@claude-plugins-official": true
+  }
+}
