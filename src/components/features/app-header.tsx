@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { Bell, LogOut, Menu, Moon, Search, Settings, Sun, User } from 'lucide-react'
 import { useTheme } from 'next-themes'
@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
-import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { AppSidebar } from '@/components/features/app-sidebar'
 import { type Workspace } from '@/types/workspace'
 import { type User as UserType } from '@/types/user'
@@ -43,9 +43,14 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ workspace, user }: AppHeaderProps) {
-  const { theme, setTheme } = useTheme()
+  const { resolvedTheme, setTheme } = useTheme()
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  // Fecha o menu mobile sempre que a rota muda (navegação dentro do Sheet)
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [pathname])
 
   const segments = pathname.split('/').filter(Boolean)
   const currentSection = segments[1] ?? 'dashboard'
@@ -55,16 +60,12 @@ export function AppHeader({ workspace, user }: AppHeaderProps) {
     <header className="flex h-14 items-center gap-3 border-b border-border px-4 bg-background shrink-0">
       {/* Hamburger — só no mobile */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden shrink-0"
-          onClick={() => setMobileOpen(true)}
-        >
-          <Menu className="h-5 w-5" />
-          <span className="sr-only">Abrir menu</span>
-        </Button>
-
+        <SheetTrigger asChild>
+          <Button variant="ghost" size="icon" className="md:hidden shrink-0">
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Abrir menu</span>
+          </Button>
+        </SheetTrigger>
         <SheetContent side="left" className="p-0 w-64">
           <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
           <AppSidebar workspace={workspace} />
@@ -133,10 +134,14 @@ export function AppHeader({ workspace, user }: AppHeaderProps) {
 
             <DropdownMenuItem
               className="gap-2 cursor-pointer"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
             >
-              {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              {theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
+              {resolvedTheme === 'dark' ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+              {resolvedTheme === 'dark' ? 'Modo claro' : 'Modo escuro'}
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
