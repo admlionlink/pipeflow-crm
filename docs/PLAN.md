@@ -126,18 +126,18 @@ Plano executável dividido em milestones, derivado do briefing técnico em [../C
 
 ### M06 — Leads UI
 
-- **Branch**: `feat/m06-leads-ui`
+- **Branch**: `feat/m06-leads-ui` ✅ mergeado em `main` — PR #4
 - **Objetivo**: CRUD visual completo de leads com busca, filtros e página de detalhe.
 - **Entregas**:
-  - [ ] `/leads`: tabela paginada com colunas Nome, Empresa, E-mail, Telefone, Status, Responsável.
-  - [ ] Busca global por nome / e-mail / empresa.
-  - [ ] Filtros: por status (multi-select), por responsável, por intervalo de data.
-  - [ ] Ordenação por coluna.
-  - [ ] Botão "Novo lead" → Dialog com formulário (nome, e-mail, telefone, empresa, cargo, status).
-  - [ ] Ações inline por linha: editar, excluir (com confirm), ver detalhes.
-  - [ ] `/leads/[id]`: página de detalhe com perfil, badges de status, botões de ação.
-  - [ ] Placeholder de timeline na página de detalhe (preenchida em M08).
-  - [ ] Empty state e skeleton de loading.
+  - [x] `/leads`: tabela paginada com colunas Nome, Empresa, E-mail, Telefone, Status, Responsável.
+  - [x] Busca global por nome / e-mail / empresa.
+  - [x] Filtros: por status (multi-select), por responsável, por intervalo de data.
+  - [x] Ordenação por coluna.
+  - [x] Botão "Novo lead" → Dialog com formulário (nome, e-mail, telefone, empresa, cargo, status, valor estimado, notas).
+  - [x] Ações inline por linha: editar, excluir (com confirm), ver detalhes.
+  - [x] `/leads/[id]`: página de detalhe com perfil centralizado, badges de status, valor estimado, botão Editar funcional.
+  - [x] Timeline de atividades visual com título, tipo, data absoluta pt-BR e autor (antecipa M08).
+  - [x] Empty state e paginação (8 itens/página).
 - **Commit final**: `feat(leads): list with search/filters, CRUD dialog and detail page`
 
 ### M07 — Pipeline Kanban UI
