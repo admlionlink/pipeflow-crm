@@ -45,8 +45,9 @@ export function OnboardingForm() {
     setIsLoading(true)
     await new Promise((resolve) => setTimeout(resolve, 1000))
     setIsLoading(false)
-    toast.success(`Workspace "${data.workspaceName}" criado com sucesso!`)
-    router.push(`/${toSlug(data.workspaceName)}/dashboard`)
+    toast.success(`Workspace "${data.workspaceName}" criado! Entrando…`)
+    // Mock: redireciona para workspace de demonstração até o backend estar pronto
+    router.push('/agencia-criativa/dashboard')
   }
 
   return (
