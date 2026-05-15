@@ -123,7 +123,22 @@ docs/
 
 ## Comandos de Desenvolvimento
 
-> A ser preenchido após o scaffold inicial (`npx create-next-app@latest`). Esperados: `npm run dev`, `npm run build`, `npm run lint`, `npm run typecheck`, `npx supabase start`, `npx supabase migration new <nome>`.
+```bash
+npm run dev            # Servidor de desenvolvimento (http://localhost:3000)
+npm run build          # Build de produção (usa cross-env NODE_ENV=production)
+npm run start          # Servir build de produção
+npm run lint           # ESLint
+npm run typecheck      # tsc --noEmit
+npm run format         # Prettier --write
+npm run format:check   # Prettier --check
+
+# Supabase local (a partir do M10)
+npx supabase start
+npx supabase migration new <nome>
+npx supabase gen types typescript --local > src/types/database.ts
+```
+
+> **Atenção**: O ambiente tem `NODE_ENV=development` definido globalmente. O script `build` usa `cross-env NODE_ENV=production` para garantir o build correto. Sempre use `npm run build`, nunca `next build` diretamente.
 
 ## Referências
 

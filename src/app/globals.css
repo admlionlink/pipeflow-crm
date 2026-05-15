@@ -1,0 +1,143 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .font-mono {
+    font-family: var(--font-mono), ui-monospace, monospace;
+  }
+}
+
+@layer base {
+  /* -------------------------------------------------------
+   * PipeFlow Design Tokens
+   * Primary: orange #F97316 — Secondary: coral #FF6B35
+   * Accent: amber #F59E0B — Success: emerald #10B981
+   * Error: red #EF4444 — Dark-first theme
+   * ------------------------------------------------------- */
+  :root {
+    /* Backgrounds */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    /* Cards & Popovers */
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    /* Primary — orange #F97316 */
+    --primary: 24.6 94.7% 53.1%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary — zinc-100 in light */
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    /* Muted */
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    /* Accent — amber #F59E0B */
+    --accent: 45.4 93.4% 47.5%;
+    --accent-foreground: 240 10% 3.9%;
+
+    /* Destructive — red #EF4444 */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders & Inputs */
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 24.6 94.7% 53.1%;
+
+    /* Border radius */
+    --radius: 0.5rem;
+
+    /* Sidebar */
+    --sidebar-background: 240 4.8% 97%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 24.6 94.7% 53.1%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 24.6 94.7% 53.1%;
+
+    /* PipeFlow brand tokens */
+    --pipeflow-primary: 24.6 94.7% 53.1%;    /* orange-500 #F97316 */
+    --pipeflow-coral: 16.6 100% 60%;          /* coral #FF6B35 */
+    --pipeflow-amber: 45.4 93.4% 47.5%;       /* amber-500 #F59E0B */
+    --pipeflow-emerald: 158.1 64.4% 51.6%;    /* emerald-500 #10B981 */
+    --pipeflow-red: 0 84.2% 60.2%;            /* red-500 #EF4444 */
+
+    /* Chart colors */
+    --chart-1: 24.6 94.7% 53.1%;
+    --chart-2: 45.4 93.4% 47.5%;
+    --chart-3: 158.1 64.4% 51.6%;
+    --chart-4: 16.6 100% 60%;
+    --chart-5: 0 84.2% 60.2%;
+  }
+
+  .dark {
+    /* Backgrounds — zinc-950 / zinc-900 */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    /* Cards & Popovers */
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Primary — orange (same in dark) */
+    --primary: 24.6 94.7% 53.1%;
+    --primary-foreground: 0 0% 98%;
+
+    /* Secondary */
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    /* Muted */
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    /* Accent — amber */
+    --accent: 45.4 93.4% 47.5%;
+    --accent-foreground: 240 10% 3.9%;
+
+    /* Destructive */
+    --destructive: 0 72.2% 50.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Borders & Inputs */
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 24.6 94.7% 53.1%;
+
+    /* Sidebar */
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 24.6 94.7% 53.1%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 24.6 94.7% 53.1%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  html {
+    @apply font-sans;
+  }
+}
