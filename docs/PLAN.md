@@ -43,18 +43,18 @@ Plano executável dividido em milestones, derivado do briefing técnico em [../C
 - **Branch**: `feat/m01-setup`
 - **Objetivo**: bootar o projeto Next.js 14 com toda a base técnica (TS strict, Tailwind, shadcn/ui com tema custom laranja/coral dark-first) e tooling de qualidade.
 - **Entregas**:
-  - [ ] `npx create-next-app@latest` (App Router, TS, Tailwind, src/, ESLint, alias `@/`).
-  - [ ] Estrutura de pastas conforme [CLAUDE.md](../CLAUDE.md): `app/`, `components/ui`, `components/features`, `lib/`, `server/`, `hooks/`, `types/`, `styles/`.
-  - [ ] Prettier configurado + script `format` (2 espaços, aspas simples, trailing commas).
-  - [ ] `shadcn/ui` inicializado com tema customizado (tokens HSL para laranja `#F97316`, coral, âmbar, esmeralda, vermelho).
-  - [ ] Dark mode como padrão via `next-themes`, com toggle.
-  - [ ] Fontes **Inter** + **JetBrains Mono** via `next/font`.
-  - [ ] `globals.css` com tokens do design system (cores, espaçamentos, radius).
-  - [ ] Componentes base shadcn instalados: `button`, `input`, `label`, `card`, `dialog`, `dropdown-menu`, `sheet`, `tabs`, `badge`, `avatar`, `tooltip`, `sonner` (toast).
-  - [ ] Página `/` placeholder confirmando tema aplicado e fontes carregadas.
-  - [ ] `.env.example` criado (estrutura vazia).
-  - [ ] `README.md` mínimo com `npm run dev` e link para `docs/`.
-  - [ ] `.gitignore` cobrindo `.env*`, `node_modules`, `.next`, `dist`.
+  - [x] `npx create-next-app@latest` (App Router, TS, Tailwind, src/, ESLint, alias `@/`).
+  - [x] Estrutura de pastas conforme [CLAUDE.md](../CLAUDE.md): `app/`, `components/ui`, `components/features`, `lib/`, `server/`, `hooks/`, `types/`, `styles/`.
+  - [x] Prettier configurado + script `format` (2 espaços, aspas simples, trailing commas).
+  - [x] `shadcn/ui` inicializado com tema customizado (tokens HSL para laranja `#F97316`, coral, âmbar, esmeralda, vermelho).
+  - [x] Dark mode como padrão via `next-themes`, com toggle.
+  - [x] Fontes **Inter** + **JetBrains Mono** via `next/font`.
+  - [x] `globals.css` com tokens do design system (cores, espaçamentos, radius).
+  - [x] Componentes base shadcn instalados: `button`, `input`, `label`, `card`, `dialog`, `dropdown-menu`, `sheet`, `tabs`, `badge`, `avatar`, `tooltip`, `sonner` (toast).
+  - [x] Página `/` placeholder confirmando tema aplicado e fontes carregadas.
+  - [x] `.env.example` criado (estrutura vazia).
+  - [x] `README.md` mínimo com `npm run dev` e link para `docs/`.
+  - [x] `.gitignore` cobrindo `.env*`, `node_modules`, `.next`, `dist`.
 - **Commit final**: `chore: bootstrap Next.js 14 + Tailwind + shadcn/ui with PipeFlow theme`
 
 ---
