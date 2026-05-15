@@ -100,14 +100,14 @@ Plano executável dividido em milestones, derivado do briefing técnico em [../C
 - **Branch**: `feat/m04-app-shell`
 - **Objetivo**: layout autenticado com sidebar, header, workspace switcher e rotas placeholder.
 - **Entregas**:
-  - [ ] Route group `(app)/[workspace]` com layout próprio.
-  - [ ] Sidebar fixa (desktop) / Sheet (mobile) com nav: Dashboard, Leads, Pipeline, Atividades, Configurações.
-  - [ ] **Workspace switcher** no topo da sidebar (dropdown com workspaces mockados + "Criar workspace").
-  - [ ] Header com breadcrumb, busca global (placeholder), notificações, avatar com menu (perfil, configurações, sair).
-  - [ ] Theme toggle integrado ao menu do avatar.
-  - [ ] Rotas placeholder funcionando: `/[workspace]/dashboard`, `/leads`, `/pipeline`, `/activities`, `/settings`.
-  - [ ] Indicador visual de rota ativa na sidebar.
-  - [ ] Skeleton de loading para troca de workspace.
+  - [x] Route group `(app)/[workspace]` com layout próprio.
+  - [x] Sidebar fixa (desktop) / Sheet (mobile) com nav: Dashboard, Leads, Pipeline, Atividades, Configurações.
+  - [x] **Workspace switcher** no topo da sidebar (dropdown com workspaces mockados + "Criar workspace").
+  - [x] Header com breadcrumb, busca global (placeholder), notificações, avatar com menu (perfil, configurações, sair).
+  - [x] Theme toggle integrado ao menu do avatar.
+  - [x] Rotas placeholder funcionando: `/[workspace]/dashboard`, `/leads`, `/pipeline`, `/activities`, `/settings`.
+  - [x] Indicador visual de rota ativa na sidebar.
+  - [x] Skeleton de loading para troca de workspace.
 - **Commit final**: `feat(app): authenticated shell with sidebar, workspace switcher and routing`
 
 ### M05 — Dashboard UI
