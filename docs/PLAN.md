@@ -164,17 +164,17 @@ Plano executável dividido em milestones, derivado do briefing técnico em [../C
 
 ### M08 — Timeline de Atividades UI
 
-- **Branch**: `feat/m08-activities-ui`
+- **Branch**: `feat/m08-activity-dialog` ✅ mergeado em `main`
 - **Objetivo**: timeline cronológica de atividades dentro da página de detalhe do lead.
 - **Entregas**:
-  - [ ] Componente `<ActivityTimeline />` em `components/features/`.
-  - [ ] 4 tipos visuais: ligação (phone), e-mail (mail), reunião (calendar), nota (file-text).
-  - [ ] Cada item com autor (avatar + nome), data relativa ("há 2 horas") + tooltip com data absoluta, descrição.
-  - [ ] Botão "+ Nova atividade" abre Dialog com seletor de tipo + form contextual.
-  - [ ] Filtro por tipo de atividade.
-  - [ ] Ordenação decrescente por data (mais recente no topo).
-  - [ ] Integrado na página `/leads/[id]` (M06).
-  - [ ] Empty state amigável.
+  - [x] Componente `<ActivityTimeline />` em `components/features/`.
+  - [x] 4 tipos visuais: ligação (phone), e-mail (mail), reunião (calendar), nota (file-text).
+  - [x] Cada item com autor (avatar + nome), data relativa ("há X horas") + tooltip com data absoluta.
+  - [x] Botão "+ Nova atividade" abre Dialog com seletor de tipo + form contextual (título, descrição, campo extra por tipo).
+  - [x] Filtro por tipo de atividade.
+  - [x] Ordenação decrescente por data (mais recente no topo).
+  - [x] Integrado na página `/leads/[id]` (M06).
+  - [x] Empty state amigável.
 - **Commit final**: `feat(activities): chronological timeline in lead detail page`
 
 ### M09 — Settings UI
