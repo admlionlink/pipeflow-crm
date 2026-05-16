@@ -27,6 +27,9 @@ const config: Config = {
         'pf-negative': '#FF4757',
         'pf-warm': '#FF6B35',
         'pf-cool': '#5B7FFF',
+        'pf-text': '#E8E8E8',
+        'pf-text-secondary': '#A8A8B3',
+        'pf-text-muted': '#6E6E7A',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
