@@ -83,18 +83,18 @@ Plano executável dividido em milestones, derivado do briefing técnico em [../C
 
 ### M03 — Auth UI
 
-- **Branch**: `feat/m03-auth-ui`
+- **Branch**: `feat/m03-complete-auth` ✅ mergeado em `main`
 - **Objetivo**: telas de autenticação completas com validação client-side, sem integração real ainda.
 - **Entregas**:
-  - [ ] Route group `(auth)` com layout centralizado (card no centro, branding lateral).
-  - [ ] `/login`: e-mail + senha, link "Esqueci minha senha", botão "Entrar com Google" (placeholder).
-  - [ ] `/signup`: nome, e-mail, senha (com indicador de força), checkbox de termos.
-  - [ ] `/forgot-password`: input de e-mail + tela de confirmação.
-  - [ ] `/reset-password?token=...`: nova senha + confirmação.
-  - [ ] Validação com `react-hook-form` + `zod`.
-  - [ ] Estados de loading e erro nos formulários.
-  - [ ] Redirect mockado para `/app` após login bem-sucedido.
-  - [ ] Toasts de feedback via Sonner.
+  - [x] Route group `(auth)` com layout centralizado (card no centro, branding lateral).
+  - [x] `/login`: e-mail + senha, link "Esqueci minha senha", botão "Entrar com Google" (placeholder).
+  - [x] `/signup`: nome, e-mail, senha (com indicador de força), checkbox de termos.
+  - [x] `/forgot-password`: input de e-mail + tela de confirmação ("Verifique seu e-mail").
+  - [x] `/reset-password?token=...`: nova senha + confirmação com strength meter.
+  - [x] Validação com `react-hook-form` + `zod`.
+  - [x] Estados de loading e erro nos formulários.
+  - [x] Redirect mockado para `/onboarding` → dashboard após login bem-sucedido.
+  - [x] Toasts de feedback via Sonner.
 - **Commit final**: `feat(auth): login, signup, forgot/reset password screens with validation`
 
 ### M04 — App Shell & Navigation
