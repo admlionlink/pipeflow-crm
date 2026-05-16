@@ -65,18 +65,20 @@ Plano executável dividido em milestones, derivado do briefing técnico em [../C
 
 ### M02 — Landing Page
 
-- **Branch**: `feat/m02-landing-page`
+- **Branch**: `feat/m02-landing-page` ✅ mergeado em `main`
 - **Objetivo**: página pública de apresentação do produto, pronta para captar interesse.
 - **Entregas**:
-  - [ ] Route group `(marketing)` com layout próprio (sem sidebar do app).
-  - [ ] Seção **Hero**: título, subtítulo, CTA "Comece grátis", mockup do produto.
-  - [ ] Seção **Funcionalidades**: 4–6 cards com ícones (lucide-react) e descrição.
-  - [ ] Seção **Como funciona**: 3 passos visuais.
-  - [ ] Seção **Planos e preços**: cards Free vs Pro (R$ 49/mês), CTA por plano.
-  - [ ] Seção **CTA final** + footer com links institucionais.
-  - [ ] Header público com logo, links âncora e botões Entrar / Começar grátis.
-  - [ ] Responsivo mobile-first (testar 375 / 768 / 1280 px).
-  - [ ] Metadata SEO: title, description, OpenGraph básico.
+  - [x] Route group `(marketing)` com layout próprio (sem sidebar do app).
+  - [x] Seção **Hero**: título, subtítulo, CTA "Comece grátis", pipeline viz terminal.
+  - [x] Seção **Funcionalidades**: 6 cards com número indexado e descrição.
+  - [x] Seção **Cases de Sucesso**: 3 cards com métrica, citação e autor.
+  - [x] Seção **Planos e preços**: cards Free vs Pro (R$ 49/mês), CTA por plano.
+  - [x] Seção **CTA final** + footer com links institucionais.
+  - [x] Header público com logo, links âncora e botões Entrar / Começar grátis.
+  - [x] Responsivo mobile-first (375 / 768 / 1280 px) + menu hamburger.
+  - [x] Metadata SEO: title, description, OpenGraph básico.
+  - [x] Componentes compartilhados: `Logo`, `WaveSeparator`, `AnimateOnScroll`.
+  - [x] Classes CSS: `pf-orb`, `pf-glow-btn`, `pf-page-enter`, `pf-flow-pulse`.
 - **Commit final**: `feat(marketing): public landing page with hero, features and pricing`
 
 ### M03 — Auth UI
