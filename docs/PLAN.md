@@ -179,15 +179,15 @@ Plano executável dividido em milestones, derivado do briefing técnico em [../C
 
 ### M09 — Settings UI
 
-- **Branch**: `feat/m09-settings-ui`
+- **Branch**: `feat/m09-settings-ui` ✅ mergeado em `main`
 - **Objetivo**: telas de configuração do workspace, perfil e plano (ainda mockado).
 - **Entregas**:
-  - [ ] `/settings` com tabs: Workspace, Membros, Plano, Perfil.
-  - [ ] **Workspace**: nome, descrição, avatar do workspace, botão "Excluir workspace" (com confirm).
-  - [ ] **Membros**: lista de colaboradores com papel, botão "Convidar por e-mail" abre Dialog, remover membro.
-  - [ ] **Plano**: card mostrando plano atual (Free), uso (X/2 colaboradores, Y/50 leads) com barra de progresso, botão "Fazer upgrade para Pro" (mockado).
-  - [ ] **Perfil**: avatar, nome, e-mail, alterar senha.
-  - [ ] Alertas visuais quando próximo do limite Free (>80%).
+  - [x] `/settings` com tabs: Workspace, Membros, Plano, Perfil.
+  - [x] **Workspace**: nome + slug com form validado, botão "Excluir workspace" com Dialog de confirmação.
+  - [x] **Membros**: lista com papel (Admin/Membro), botão "Convidar" abre Dialog com e-mail + role, remover membro.
+  - [x] **Plano**: card do plano atual, barras de progresso (membros X/2, leads Y/50), alerta >80%, botão upgrade.
+  - [x] **Perfil**: avatar, form de nome/e-mail, form de alteração de senha com PasswordStrength.
+  - [x] Alertas visuais quando próximo do limite Free (>80%).
 - **Commit final**: `feat(settings): workspace, members, plan and profile management UI`
 
 ---
