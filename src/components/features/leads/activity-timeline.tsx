@@ -4,8 +4,10 @@ import { useState } from 'react'
 import { Phone, Mail, Calendar, FileText, Plus, Clock } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { cn, formatRelativeDate, formatAbsoluteDate } from '@/lib/utils'
 import { type Activity, type ActivityType } from '@/types/activity'
+import { NewActivityDialog } from '@/components/features/leads/new-activity-dialog'
 
 const ACTIVITY_CONFIG: Record<
   ActivityType,
@@ -25,29 +27,28 @@ const TYPE_FILTERS: { value: ActivityType | 'all'; label: string }[] = [
   { value: 'note', label: 'Notas' },
 ]
 
-function formatActivityDate(dateStr: string): string {
-  const date = new Date(dateStr)
-  const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
-  const day = date.getUTCDate()
-  const month = months[date.getUTCMonth()]
-  const year = date.getUTCFullYear()
-  const hours = String(date.getUTCHours()).padStart(2, '0')
-  const minutes = String(date.getUTCMinutes()).padStart(2, '0')
-  return `${day} de ${month}, ${year} às ${hours}:${minutes}`
-}
-
 interface ActivityTimelineProps {
   activities: Activity[]
+  leadId: string
 }
 
-export function ActivityTimeline({ activities }: ActivityTimelineProps) {
+export function ActivityTimeline({ activities, leadId }: ActivityTimelineProps) {
+  const [localActivities, setLocalActivities] = useState<Activity[]>(activities)
   const [activeFilter, setActiveFilter] = useState<ActivityType | 'all'>('all')
+  const [dialogOpen, setDialogOpen] = useState(false)
+
+  function handleAddActivity(activity: Activity) {
+    setLocalActivities((prev) => [activity, ...prev])
+  }
 
   const filtered =
-    activeFilter === 'all' ? activities : activities.filter((a) => a.type === activeFilter)
+    activeFilter === 'all'
+      ? localActivities
+      : localActivities.filter((a) => a.type === activeFilter)
 
+  // Mais recente no topo
   const sorted = [...filtered].sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   )
 
   return (
@@ -56,13 +57,13 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">
           Atividades
-          {activities.length > 0 && (
+          {localActivities.length > 0 && (
             <span className="ml-1.5 text-sm font-normal text-muted-foreground">
-              ({activities.length})
+              ({localActivities.length})
             </span>
           )}
         </h3>
-        <Button size="sm" variant="outline" disabled title="Disponível em breve">
+        <Button size="sm" variant="outline" onClick={() => setDialogOpen(true)}>
           <Plus className="h-3.5 w-3.5" />
           Registrar atividade
         </Button>
@@ -91,7 +92,7 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
         <div className="flex flex-col items-center py-12 text-center">
           <Clock className="mb-3 h-8 w-8 text-muted-foreground" />
           <p className="text-sm text-muted-foreground">
-            {activities.length === 0
+            {localActivities.length === 0
               ? 'Nenhuma atividade registrada ainda.'
               : 'Nenhuma atividade com esse filtro.'}
           </p>
@@ -107,7 +108,7 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
               <div key={activity.id} className="relative flex gap-4">
                 {/* Linha conectora vertical */}
                 {!isLast && (
-                  <div className="absolute left-[19px] top-10 bottom-0 w-px bg-border" />
+                  <div className="absolute bottom-0 left-[19px] top-10 w-px bg-border" />
                 )}
 
                 {/* Ícone */}
@@ -127,21 +128,30 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
                     <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       {config.label}
                     </span>
-                    <time
-                      dateTime={activity.createdAt}
-                      className="shrink-0 whitespace-nowrap text-xs text-muted-foreground"
-                    >
-                      {formatActivityDate(activity.createdAt)}
-                    </time>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <time
+                          dateTime={activity.createdAt}
+                          className="shrink-0 cursor-default whitespace-nowrap text-xs text-muted-foreground"
+                        >
+                          {formatRelativeDate(activity.createdAt)}
+                        </time>
+                      </TooltipTrigger>
+                      <TooltipContent side="left">
+                        {formatAbsoluteDate(activity.createdAt)}
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
 
                   {/* Título */}
                   <p className="mt-0.5 font-semibold leading-snug">{activity.title}</p>
 
                   {/* Descrição */}
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                    {activity.description}
-                  </p>
+                  {activity.description && (
+                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                      {activity.description}
+                    </p>
+                  )}
 
                   {/* Autor */}
                   <div className="mt-2 flex items-center gap-1.5">
@@ -162,6 +172,13 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
           })}
         </div>
       )}
+
+      <NewActivityDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        leadId={leadId}
+        onAdd={handleAddActivity}
+      />
     </div>
   )
 }

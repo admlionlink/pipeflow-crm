@@ -144,7 +144,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
         <div className="lg:col-span-3">
           <Card>
             <CardContent className="pt-6">
-              <ActivityTimeline activities={activities} />
+              <ActivityTimeline activities={activities} leadId={lead.id} />
             </CardContent>
           </Card>
         </div>
