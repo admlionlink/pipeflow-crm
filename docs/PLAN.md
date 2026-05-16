@@ -112,16 +112,16 @@ Plano executável dividido em milestones, derivado do briefing técnico em [../C
 
 ### M05 — Dashboard UI
 
-- **Branch**: `feat/m05-dashboard-ui`
+- **Branch**: `feat/m05-dashboard-ui` ✅ mergeado em `main` — PR #6
 - **Objetivo**: dashboard de métricas com dados mockados, pronto para receber dados reais depois.
 - **Entregas**:
-  - [ ] Cards de KPI: Total de leads, Negócios abertos, Valor do pipeline (R$), Taxa de conversão (%).
-  - [ ] Cada card com ícone, valor grande em JetBrains Mono, variação % vs período anterior.
-  - [ ] Gráfico de funil de vendas com Recharts (mock por etapa do pipeline).
-  - [ ] Lista "Próximos prazos": deals com `due_date` próximo (mockados).
-  - [ ] Filtro de período (7d / 30d / 90d / Customizado).
-  - [ ] Empty state quando workspace sem dados.
-  - [ ] Responsivo: grid 4 → 2 → 1.
+  - [x] Cards de KPI: Total de leads, Negócios abertos, Valor do pipeline (R$), Taxa de conversão (%).
+  - [x] Cada card com ícone, valor grande em JetBrains Mono, variação % vs período anterior.
+  - [x] Gráfico de barras verticais por etapa do pipeline com Recharts (6 estágios incluindo Perdido).
+  - [x] Tabela full-width "Negócios com Prazo Próximo" com colunas Negócio / Lead / Etapa / Prazo / Valor.
+  - [x] Filtro de período (7d / 30d / 90d) via URL search param.
+  - [x] Empty state na tabela quando sem prazos próximos.
+  - [x] Responsivo: grid 4 → 2 → 1.
 - **Commit final**: `feat(dashboard): metrics cards, funnel chart and upcoming deals`
 
 ### M06 — Leads UI
