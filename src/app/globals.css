@@ -9,6 +9,26 @@
   .font-mono {
     font-family: var(--font-mono), ui-monospace, monospace;
   }
+  .animate-fade-slide-up {
+    animation: fadeSlideUp 0.35s ease-out both;
+  }
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-slide-up {
+    animation: none;
+  }
 }
 
 @layer base {

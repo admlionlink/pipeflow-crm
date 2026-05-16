@@ -142,19 +142,22 @@ Plano executável dividido em milestones, derivado do briefing técnico em [../C
 
 ### M07 — Pipeline Kanban UI
 
-- **Branch**: `feat/m07-pipeline-kanban`
+- **Branch**: `feat/m07-pipeline-kanban` ✅ mergeado em `main` — PR #5
 - **Objetivo**: board Kanban de negócios com drag-and-drop funcional sobre estado local.
 - **Entregas**:
-  - [ ] `@dnd-kit/core` + `@dnd-kit/sortable` instalados.
-  - [ ] `/pipeline`: 6 colunas (Novo Lead, Contato, Proposta, Negociação, Ganho, Perdido).
-  - [ ] Cards de deal: título, valor em JetBrains Mono, lead vinculado (avatar + nome), responsável, prazo, badge por etapa.
-  - [ ] Drag-and-drop entre colunas com animação suave.
-  - [ ] Reordenação dentro da mesma coluna.
-  - [ ] Botão "+ Novo deal" no topo de cada coluna.
-  - [ ] Dialog de criação/edição de deal vinculando a um lead existente.
-  - [ ] Click no card → drawer lateral com detalhes do deal.
-  - [ ] Filtro por responsável e por intervalo de valor no topo.
-  - [ ] Cores de borda das colunas conforme tema (esmeralda para Ganho, vermelho para Perdido, neutros para etapas intermediárias).
+  - [x] `@dnd-kit/core` + `@dnd-kit/sortable` + `@dnd-kit/utilities` instalados.
+  - [x] `/pipeline`: 6 colunas (Novo Lead, Contato Realizado, Proposta Enviada, Negociação, Fechado, Perdido).
+  - [x] Cards de deal: título "Negócio — Empresa", valor em JetBrains Mono na cor do estágio, contato (avatar + nome), responsável na cor do estágio, prazo com badge "Vencido" quando expirado.
+  - [x] Drag-and-drop entre colunas com animação suave (DragOverlay rotacionado).
+  - [x] Botão "+ Novo deal" no topo de cada coluna e no header da página.
+  - [x] Dialog de criação e edição de deal (título, contato, empresa, valor, etapa, responsável, prazo, notas).
+  - [x] Click no card → drawer lateral com detalhes completos do deal.
+  - [x] Botão Editar funcional na sheet e nos três pontinhos do card.
+  - [x] Cores de topo das colunas conforme tema (azul → Novo, cyan → Contato, âmbar → Proposta, laranja → Negociação, esmeralda → Fechado, vermelho → Perdido).
+  - [x] Cor do estágio propagada para: barra de topo, label, total da coluna, valor do card e responsável.
+  - [x] Tailwind `content` expandido para cobrir `src/types/` e `src/lib/` (fix de purge de classes dinâmicas).
+  - [ ] Reordenação dentro da mesma coluna — não implementado (deferred).
+  - [ ] Filtro por responsável e intervalo de valor — não implementado (deferred).
 - **Commit final**: `feat(pipeline): kanban board with drag-and-drop deal management`
 
 ### M08 — Timeline de Atividades UI
