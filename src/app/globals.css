@@ -7,7 +7,7 @@
     text-wrap: balance;
   }
   .font-mono {
-    font-family: var(--font-mono), ui-monospace, monospace;
+    font-family: var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
   }
   .animate-fade-slide-up {
     animation: fadeSlideUp 0.35s ease-out both;
@@ -33,10 +33,10 @@
 
 @layer base {
   /* -------------------------------------------------------
-   * PipeFlow Design Tokens
-   * Primary: orange #F97316 — Secondary: coral #FF6B35
-   * Accent: amber #F59E0B — Success: emerald #10B981
-   * Error: red #EF4444 — Dark-first theme
+   * PipeFlow Design Tokens v2 — Editorial Brutalist
+   * Accent: chartreuse #f5d10d — Body: DM Sans
+   * Display: Syne — Mono: IBM Plex Mono
+   * Dark-first theme
    * ------------------------------------------------------- */
   :root {
     /* Backgrounds */
@@ -49,11 +49,11 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    /* Primary — orange #F97316 */
+    /* Primary — orange #F97316 (light mode keeps orange for contrast) */
     --primary: 24.6 94.7% 53.1%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary — zinc-100 in light */
+    /* Secondary */
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
 
@@ -61,11 +61,11 @@
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
 
-    /* Accent — amber #F59E0B */
-    --accent: 45.4 93.4% 47.5%;
-    --accent-foreground: 240 10% 3.9%;
+    /* Accent — neutral hover surface */
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
 
-    /* Destructive — red #EF4444 */
+    /* Destructive */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
@@ -103,50 +103,50 @@
   }
 
   .dark {
-    /* Backgrounds — zinc-950 / zinc-900 */
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    /* Backgrounds — v2: #0C0C0E base, #141416 surface */
+    --background: 240 10% 5%;
+    --foreground: 0 0% 91%;
 
-    /* Cards & Popovers */
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    /* Cards & Popovers — #141416 surface */
+    --card: 240 5% 8%;
+    --card-foreground: 0 0% 91%;
+    --popover: 240 5% 8%;
+    --popover-foreground: 0 0% 91%;
 
-    /* Primary — orange (same in dark) */
-    --primary: 24.6 94.7% 53.1%;
-    --primary-foreground: 0 0% 98%;
+    /* Primary — chartreuse #f5d10d */
+    --primary: 51 93% 51%;
+    --primary-foreground: 240 10% 5%;
 
-    /* Secondary */
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    /* Secondary — #1A1A1E surface-2 */
+    --secondary: 240 5% 11%;
+    --secondary-foreground: 0 0% 91%;
 
-    /* Muted */
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    /* Muted — #1A1A1E */
+    --muted: 240 5% 11%;
+    --muted-foreground: 250 2% 55%;
 
-    /* Accent — amber */
-    --accent: 45.4 93.4% 47.5%;
-    --accent-foreground: 240 10% 3.9%;
+    /* Accent — neutral hover surface (#1A1A1E) */
+    --accent: 240 5% 11%;
+    --accent-foreground: 0 0% 91%;
 
     /* Destructive */
-    --destructive: 0 72.2% 50.6%;
+    --destructive: 354 100% 65%;
     --destructive-foreground: 0 0% 98%;
 
     /* Borders & Inputs */
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 24.6 94.7% 53.1%;
+    --border: 240 3% 17%;
+    --input: 240 5% 12%;
+    --ring: 51 93% 51%;
 
-    /* Sidebar */
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 24.6 94.7% 53.1%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 24.6 94.7% 53.1%;
+    /* Sidebar — pf-surface #141416 */
+    --sidebar-background: 240 5% 8%;
+    --sidebar-foreground: 0 0% 91%;
+    --sidebar-primary: 51 93% 51%;
+    --sidebar-primary-foreground: 240 10% 5%;
+    --sidebar-accent: 240 5% 11%;
+    --sidebar-accent-foreground: 0 0% 91%;
+    --sidebar-border: 240 3% 17%;
+    --sidebar-ring: 51 93% 51%;
   }
 
   * {
@@ -160,4 +160,16 @@
   html {
     @apply font-sans;
   }
+}
+
+/* Noise texture overlay — dark mode only */
+.dark body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
 }

@@ -12,10 +12,21 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-sans)', 'Inter', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-mono)', 'JetBrains Mono', 'ui-monospace', 'monospace'],
+        sans: ['var(--font-sans)', 'DM Sans', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-mono)', 'IBM Plex Mono', 'ui-monospace', 'monospace'],
+        display: ['var(--font-display)', 'Syne', 'sans-serif'],
       },
       colors: {
+        'pf-accent': '#f5d10d',
+        'pf-bg': '#0C0C0E',
+        'pf-surface': '#141416',
+        'pf-surface-2': '#1A1A1E',
+        'pf-border': '#2A2A2E',
+        'pf-border-subtle': '#1E1E22',
+        'pf-positive': '#2ED573',
+        'pf-negative': '#FF4757',
+        'pf-warm': '#FF6B35',
+        'pf-cool': '#5B7FFF',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

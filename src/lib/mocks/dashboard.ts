@@ -68,12 +68,12 @@ export function getDashboardMetrics(period: Period = '30d') {
 
 export function getFunnelData() {
   const stages = [
-    { stage: 'novo', label: 'Novo Lead', color: '#3B82F6' },
-    { stage: 'contatado', label: 'Contato Realizado', color: '#06B6D4' },
-    { stage: 'qualificado', label: 'Proposta Enviada', color: '#84CC16' },
-    { stage: 'negociando', label: 'Negociação', color: '#F97316' },
-    { stage: 'convertido', label: 'Fechado Ganho', color: '#10B981' },
-    { stage: 'perdido', label: 'Perdido', color: '#F87171' },
+    { stage: 'novo', label: 'Novo Lead', color: '#5B7FFF' },
+    { stage: 'contatado', label: 'Contatado', color: '#00B4D8' },
+    { stage: 'qualificado', label: 'Proposta', color: '#f5d10d' },
+    { stage: 'negociando', label: 'Negociação', color: '#FF6B35' },
+    { stage: 'convertido', label: 'Ganho', color: '#2ED573' },
+    { stage: 'perdido', label: 'Perdido', color: '#FF4757' },
   ]
 
   return stages.map(({ stage, label, color }) => ({

@@ -6,9 +6,9 @@ import { cn } from '@/lib/utils'
 type Period = '7d' | '30d' | '90d'
 
 const OPTIONS: { value: Period; label: string }[] = [
-  { value: '7d', label: '7 dias' },
-  { value: '30d', label: '30 dias' },
-  { value: '90d', label: '90 dias' },
+  { value: '7d', label: '7D' },
+  { value: '30d', label: '30D' },
+  { value: '90d', label: '90D' },
 ]
 
 export function PeriodFilter() {
@@ -23,16 +23,16 @@ export function PeriodFilter() {
   }
 
   return (
-    <div className="flex items-center gap-0.5 rounded-lg border bg-muted/40 p-1">
+    <div className="flex items-center gap-0.5 rounded-lg border bg-card p-1">
       {OPTIONS.map((opt) => (
         <button
           key={opt.value}
           onClick={() => select(opt.value)}
           className={cn(
-            'px-3 py-1.5 rounded-md text-sm font-medium transition-all',
+            'px-3 py-1.5 rounded-md text-[10px] font-mono uppercase tracking-[0.15em] transition-all',
             current === opt.value
-              ? 'bg-background text-foreground shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-background/50',
+              ? 'bg-pf-accent/10 text-pf-accent'
+              : 'text-muted-foreground hover:text-foreground hover:bg-muted/50',
           )}
         >
           {opt.label}

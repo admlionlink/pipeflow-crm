@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { BarChart3, Briefcase, DollarSign, TrendingUp, Users } from 'lucide-react'
+import { Briefcase, DollarSign, TrendingUp, Users } from 'lucide-react'
 import { KpiCard } from '@/components/features/dashboard/kpi-card'
 import { SalesFunnelChart } from '@/components/features/dashboard/funnel-chart'
 import { UpcomingDeals } from '@/components/features/dashboard/upcoming-deals'
@@ -29,64 +29,72 @@ export default function DashboardPage({ params, searchParams }: PageProps) {
   const upcomingDeals = getUpcomingDeals()
 
   return (
-    <div className="space-y-6 animate-fade-slide-up">
+    <div className="space-y-8 animate-fade-slide-up">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <BarChart3 className="h-6 w-6 text-primary" />
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-            <p className="text-sm text-muted-foreground">
-              Visão geral das métricas do seu pipeline
-            </p>
-          </div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="font-display text-2xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Visão geral das métricas do seu pipeline
+          </p>
         </div>
         <Suspense>
           <PeriodFilter />
         </Suspense>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiCard
-          title="Total de Leads"
-          value={String(metrics.totalLeads.value)}
-          change={metrics.totalLeads.change}
-          icon={Users}
-          iconClass="text-blue-500"
-          iconBgClass="bg-blue-500/10"
-        />
-        <KpiCard
-          title="Negócios Abertos"
-          value={String(metrics.openDeals.value)}
-          change={metrics.openDeals.change}
-          icon={Briefcase}
-          iconClass="text-primary"
-          iconBgClass="bg-primary/10"
-        />
-        <KpiCard
-          title="Valor do Pipeline"
-          value={formatCurrency(metrics.pipelineValue.value)}
-          change={metrics.pipelineValue.change}
-          icon={DollarSign}
-          iconClass="text-amber-500"
-          iconBgClass="bg-amber-500/10"
-        />
-        <KpiCard
-          title="Taxa de Conversão"
-          value={`${metrics.conversionRate.value.toFixed(1)}%`}
-          change={metrics.conversionRate.change}
-          icon={TrendingUp}
-          iconClass="text-emerald-500"
-          iconBgClass="bg-emerald-500/10"
-        />
+      {/* KPI Grid conectado */}
+      <div>
+        <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground mb-3">
+          01 — Métricas
+        </p>
+        <div className="rounded-xl border overflow-hidden grid grid-cols-2 xl:grid-cols-4">
+          <KpiCard
+            title="Total de Leads"
+            value={String(metrics.totalLeads.value)}
+            change={metrics.totalLeads.change}
+            icon={Users}
+            className="border-b xl:border-b-0"
+          />
+          <KpiCard
+            title="Negócios Abertos"
+            value={String(metrics.openDeals.value)}
+            change={metrics.openDeals.change}
+            icon={Briefcase}
+            className="border-l border-b xl:border-b-0"
+          />
+          <KpiCard
+            title="Valor do Pipeline"
+            value={formatCurrency(metrics.pipelineValue.value)}
+            change={metrics.pipelineValue.change}
+            icon={DollarSign}
+            className="xl:border-l"
+          />
+          <KpiCard
+            title="Taxa de Conversão"
+            value={`${metrics.conversionRate.value.toFixed(1)}%`}
+            change={metrics.conversionRate.change}
+            icon={TrendingUp}
+            className="border-l"
+          />
+        </div>
       </div>
 
-      {/* Full-width bar chart */}
-      <SalesFunnelChart data={funnelData} />
+      {/* Funil de vendas */}
+      <div>
+        <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground mb-3">
+          02 — Funil de Vendas
+        </p>
+        <SalesFunnelChart data={funnelData} />
+      </div>
 
-      {/* Full-width upcoming deals table */}
-      <UpcomingDeals deals={upcomingDeals} workspaceSlug={params.workspace} />
+      {/* Negócios com prazo próximo */}
+      <div>
+        <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground mb-3">
+          03 — Prazos
+        </p>
+        <UpcomingDeals deals={upcomingDeals} workspaceSlug={params.workspace} />
+      </div>
     </div>
   )
 }
