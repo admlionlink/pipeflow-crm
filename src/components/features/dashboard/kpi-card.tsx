@@ -1,4 +1,4 @@
-import { TrendingDown, TrendingUp, type LucideIcon } from 'lucide-react'
+import { type LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface KpiCardProps {
@@ -6,38 +6,33 @@ interface KpiCardProps {
   value: string
   change: number
   icon: LucideIcon
-  iconClass?: string
-  iconBgClass?: string
+  className?: string
 }
 
-export function KpiCard({ title, value, change, icon: Icon, iconClass, iconBgClass }: KpiCardProps) {
+export function KpiCard({ title, value, change, icon: Icon, className }: KpiCardProps) {
   const positive = change >= 0
   const changeAbs = Math.abs(change)
 
   return (
-    <div className="rounded-xl border bg-card p-5 flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-muted-foreground">{title}</span>
-        <div className={cn('rounded-lg p-2', iconBgClass ?? 'bg-primary/10')}>
-          <Icon className={cn('h-4 w-4', iconClass ?? 'text-primary')} />
-        </div>
+    <div className={cn('p-5 flex flex-col gap-3 group hover:bg-pf-surface-2 transition-colors', className)}>
+      <div className="flex items-start justify-between">
+        <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground">
+          {title}
+        </span>
+        <Icon className="h-3.5 w-3.5 text-muted-foreground/40 shrink-0 mt-0.5" />
       </div>
 
-      <div className="space-y-1">
-        <p className="font-mono text-3xl font-bold tracking-tight">{value}</p>
+      <div className="space-y-1.5">
+        <p className="font-display text-[2rem] font-bold tracking-tight leading-none">{value}</p>
         <div
           className={cn(
-            'flex items-center gap-1 text-xs font-medium',
-            positive ? 'text-emerald-500' : 'text-red-500',
+            'flex items-center gap-1 text-[11px] font-mono',
+            positive ? 'text-pf-positive' : 'text-pf-negative',
           )}
         >
-          {positive ? (
-            <TrendingUp className="h-3 w-3" />
-          ) : (
-            <TrendingDown className="h-3 w-3" />
-          )}
+          <span>{positive ? '↑' : '↓'}</span>
           <span>
-            {positive ? '+' : '-'}
+            {positive ? '+' : ''}
             {changeAbs}% vs período anterior
           </span>
         </div>

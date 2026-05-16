@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Activity, BarChart3, Kanban, Settings, Users, Zap } from 'lucide-react'
+import { Activity, BarChart3, Kanban, Settings, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { WorkspaceSwitcher } from '@/components/features/workspace-switcher'
 import { type Workspace } from '@/types/workspace'
@@ -28,11 +28,13 @@ export function AppSidebar({ workspace }: AppSidebarProps) {
       <div className="flex h-14 items-center px-4 border-b border-sidebar-border shrink-0">
         <Link
           href={`/${workspace.slug}/dashboard`}
-          className="flex items-center gap-2 font-bold text-sidebar-foreground"
+          className="flex items-center gap-2.5 font-bold text-sidebar-foreground"
         >
-          <Zap className="h-5 w-5 text-primary fill-primary" />
-          <span>
-            Pipe<span className="text-primary">Flow</span>
+          <div className="w-7 h-7 rounded-[6px] bg-pf-accent flex items-center justify-center shrink-0">
+            <span className="font-display font-extrabold text-pf-bg text-[15px] leading-none">P</span>
+          </div>
+          <span className="font-display font-semibold">
+            Pipe<span className="text-pf-accent">Flow</span>
           </span>
         </Link>
       </div>
@@ -44,7 +46,7 @@ export function AppSidebar({ workspace }: AppSidebarProps) {
 
       {/* Navegação principal */}
       <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
-        <p className="px-3 mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <p className="px-3 mb-2 text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground">
           Menu
         </p>
         {NAV_ITEMS.map((item) => {
@@ -58,18 +60,18 @@ export function AppSidebar({ workspace }: AppSidebarProps) {
               className={cn(
                 'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-primary/10 text-primary'
+                  ? 'bg-pf-accent/[0.08] text-pf-accent'
                   : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
               )}
             >
               <item.icon
-                className={cn('h-4 w-4 shrink-0', isActive ? 'text-primary' : 'text-current')}
+                className={cn('h-4 w-4 shrink-0', isActive ? 'text-pf-accent' : 'text-current')}
               />
               {item.label}
 
               {/* Indicador de rota ativa */}
               {isActive && (
-                <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary" />
+                <span className="ml-auto h-1.5 w-1.5 rounded-full bg-pf-accent" />
               )}
             </Link>
           )
@@ -78,7 +80,7 @@ export function AppSidebar({ workspace }: AppSidebarProps) {
 
       {/* Rodapé */}
       <div className="p-4 border-t border-sidebar-border shrink-0">
-        <p className="text-xs text-muted-foreground">PipeFlow CRM v0.1.0</p>
+        <p className="text-[11px] font-mono text-muted-foreground">PipeFlow CRM v0.1.0</p>
       </div>
     </div>
   )

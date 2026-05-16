@@ -33,16 +33,15 @@ function CustomTooltip({ active, payload }: TooltipPayload) {
   if (!active || !payload?.length) return null
   const d = payload[0].payload
   return (
-    <div className="rounded-lg border bg-popover px-3 py-2 shadow-md text-xs space-y-1">
-      <p className="font-semibold" style={{ color: d.color }}>
+    <div className="rounded-lg border bg-pf-surface border-pf-border px-3 py-2.5 shadow-lg text-xs space-y-1.5">
+      <p className="font-mono font-semibold uppercase tracking-wider text-[10px]" style={{ color: d.color }}>
         {d.label}
       </p>
       <p className="text-muted-foreground">
         <span className="font-mono font-bold text-foreground">{d.count}</span> negócios
       </p>
       <p className="text-muted-foreground">
-        <span className="font-mono font-bold text-foreground">{formatCurrency(d.value)}</span> em
-        valor
+        <span className="font-mono font-bold text-foreground">{formatCurrency(d.value)}</span>
       </p>
     </div>
   )
@@ -50,34 +49,29 @@ function CustomTooltip({ active, payload }: TooltipPayload) {
 
 export function SalesFunnelChart({ data }: FunnelChartProps) {
   return (
-    <div className="rounded-xl border bg-card p-5 flex flex-col gap-4">
-      <div>
-        <h3 className="text-sm font-semibold">Negócios por Etapa</h3>
-        <p className="text-xs text-muted-foreground mt-0.5">Distribuição do pipeline por fase</p>
-      </div>
-
+    <div className="rounded-xl border p-5 flex flex-col gap-4">
       <ResponsiveContainer width="100%" height={260}>
         <BarChart
           data={data}
           margin={{ top: 4, right: 4, bottom: 0, left: -16 }}
           barCategoryGap="35%"
         >
-          <CartesianGrid vertical={false} stroke="hsl(var(--border))" strokeOpacity={0.5} />
+          <CartesianGrid vertical={false} stroke="hsl(var(--border))" strokeOpacity={0.4} />
           <XAxis
             dataKey="label"
-            tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+            tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))', fontFamily: 'var(--font-mono)' }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
-            tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+            tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))', fontFamily: 'var(--font-mono)' }}
             axisLine={false}
             tickLine={false}
           />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted) / 0.4)' }} />
-          <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={56}>
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted) / 0.3)' }} />
+          <Bar dataKey="count" radius={[3, 3, 0, 0]} maxBarSize={52}>
             {data.map((entry) => (
-              <Cell key={entry.stage} fill={entry.color} fillOpacity={0.9} />
+              <Cell key={entry.stage} fill={entry.color} fillOpacity={0.85} />
             ))}
           </Bar>
         </BarChart>
