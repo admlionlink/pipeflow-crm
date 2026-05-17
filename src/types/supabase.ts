@@ -1,5 +1,5 @@
 // Gerado via: npx supabase gen types typescript --project-id ubimupnddnpmitayfozo > src/types/supabase.ts
-// Regenerar após cada migration: npx supabase gen types typescript --linked > src/types/supabase.ts
+// Regenerar após cada migration (requer Docker): npx supabase gen types typescript --linked > src/types/supabase.ts
 
 export type Json =
   | string
