@@ -196,23 +196,22 @@ Plano executável dividido em milestones, derivado do briefing técnico em [../C
 
 > A partir daqui, substituir mocks por dados reais. Cada milestone troca uma fatia da UI da Fase 2 por persistência real. Mantemos `src/lib/mocks/` apenas para testes durante a transição.
 
-### M10 — Supabase Schema & RLS
+### M10 — Supabase Schema & RLS ✅
 
-- **Branch**: `feat/supabase-core` ✅ PR #12 · `feat/m10-migrations` ✅ PR #13 — mergeados em `main`
+- **Branches**: `feat/supabase-core` → PR #12 · `feat/m10-migrations` → PR #13 — mergeados em `main`
 - **Objetivo**: criar projeto Supabase, schema completo, RLS policies e geração de tipos TS.
 - **Entregas**:
-  - [x] Projeto Supabase criado (`supabase init` local — `supabase/config.toml`).
-  - [x] Migration `0001_initial_schema.sql` com tabelas: `workspaces`, `workspace_members`, `workspace_invites`, `leads`, `deals`, `activities`, `subscriptions`.
-  - [x] Enums: `member_role` (admin/member), `deal_stage`, `activity_type`, `lead_status`, `plan` (free/pro).
-  - [x] FKs com `on delete cascade` apropriados + trigger `on_workspace_created` (admin automático).
-  - [x] Migration `0002_rls_policies.sql` com RLS habilitado em todas as tabelas de domínio.
-  - [x] Funções helper `is_workspace_member` / `is_workspace_admin` (SECURITY DEFINER).
-  - [x] Policies por papel: member (leads/deals/activities) · admin (+ workspace/members/invites/subscriptions).
+  - [x] Projeto Supabase criado (`supabase init` — `supabase/config.toml`).
+  - [x] Migration `0001_initial_schema.sql`: 7 tabelas (`workspaces`, `workspace_members`, `workspace_invites`, `leads`, `deals`, `activities`, `subscriptions`), FKs ON DELETE CASCADE, índices, triggers `updated_at` e `on_workspace_created`.
+  - [x] Enums: `member_role`, `deal_stage`, `lead_status`, `activity_type`, `plan` — aplicados no banco remoto.
+  - [x] Migration `0002_rls_policies.sql`: RLS ON em todas as 7 tabelas — verificado via `pg_tables.rowsecurity`.
+  - [x] Funções helper `is_workspace_member` / `is_workspace_admin` (SECURITY DEFINER) — verificadas no banco.
+  - [x] Policies por papel: member (leads/deals/activities CRUD) · admin (+ workspace/members/invites/subscriptions).
+  - [x] Migrations aplicadas no Supabase remoto via `supabase db push` — histórico em `supabase_migrations`.
   - [x] Tipos TS em `src/types/supabase.ts` + re-export em `src/types/database.ts`.
   - [x] Helpers `server/client.ts` (browser singleton) e `server/server.ts` (server async + cookies).
   - [x] `.env.example` atualizado com as 3 chaves Supabase + Stripe + Resend.
-  - [ ] **Pendente**: aplicar SQLs no Supabase Studio → `npx supabase gen types typescript --linked > src/types/supabase.ts`
-- **Commit final**: `feat(db): supabase schema with RLS policies and generated types`
+- **Commits**: PR #12 `feat(db): supabase clients` · PR #13 `feat(db): supabase schema migrations + RLS policies + TS types`
 
 ### M11 — Auth & Workspaces (real)
 
