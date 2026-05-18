@@ -239,34 +239,36 @@ Plano executável dividido em milestones, derivado do briefing técnico em [../C
 - **Nota técnica**: INSERT direto em `workspaces` via PostgREST table API falha com RLS 42501 (bug PG17 + authenticator role). Solução: SECURITY DEFINER RPC que roda como `postgres` (bypassrls=true).
 - **Commit**: PR #14 `feat(auth): supabase auth, workspaces, invites via resend — M11`
 
-### M12 — Leads, Deals & Activities (persistência)
+### M12 — Leads, Deals & Activities (persistência) ✅
 
-- **Branch**: `feat/m12-domain-persistence`
+- **Branch**: `feat/leads-data` → **PR #15** — mergeado em `main`
 - **Objetivo**: conectar todas as telas de domínio (Leads, Pipeline, Activities) ao Supabase via Server Actions.
 - **Entregas**:
-  - [ ] Server actions em `server/leads.ts`: `listLeads`, `getLead`, `createLead`, `updateLead`, `deleteLead`.
-  - [ ] Server actions em `server/deals.ts`: `listDeals`, `createDeal`, `updateDeal`, `moveDeal(id, stage)`, `deleteDeal`.
-  - [ ] Server actions em `server/activities.ts`: `listActivities(leadId)`, `createActivity`, `deleteActivity`.
-  - [ ] Filtros e busca de leads via `ilike` + filtros server-side.
-  - [ ] Drag-and-drop do Kanban (M07) chamando `moveDeal` com optimistic update.
-  - [ ] Timeline (M08) conectada a `activities`.
-  - [ ] Revalidação correta via `revalidatePath` após mutations.
-  - [ ] Tratamento de erros com toasts.
-  - [ ] Loading states reais (não mais mock skeletons).
-- **Commit final**: `feat(domain): persist leads, deals and activities via server actions`
+  - [x] Server actions em `server/leads.ts`: `listLeads`, `getLead`, `createLead`, `updateLead`, `deleteLead`.
+  - [x] Server actions em `server/deals.ts`: `listDeals`, `createDeal`, `updateDeal`, `moveDeal(id, stage)`, `deleteDeal`.
+  - [x] Server actions em `server/activities.ts`: `listActivities(leadId)`, `createActivity`, `deleteActivity`.
+  - [x] Filtros e busca de leads via `ilike` + GIN trigram indexes server-side (URL params).
+  - [x] Drag-and-drop do Kanban (M07) chamando `moveDeal` com optimistic update + rollback.
+  - [x] Timeline (M08) conectada a `activities` com author name via `public.profiles`.
+  - [x] Revalidação correta via `revalidatePath` após mutations.
+  - [x] Tratamento de erros com toasts + rollback otimístico.
+  - [x] Deal "Lead Vinculado" — select dropdown carrega leads reais do banco.
+  - [x] Migration `0005`: `public.profiles` (anti-N+1), pg_trgm + GIN indexes, composite + partial indexes.
+- **Skill aplicada**: `supabase-postgres-best-practices` — §1.2 GIN, §1.3 Composite, §5.1 Short TX, §6.2 Anti-N+1, §6.3 Pagination.
+- **Commit**: PR #15 `feat(domain): persist leads, deals, activities e dashboard — M12/M13`
 
-### M13 — Dashboard com dados reais
+### M13 — Dashboard com dados reais ✅
 
-- **Branch**: `feat/m13-dashboard-real`
+- **Branch**: `feat/leads-data` (entregue junto com M12) → **PR #15**
 - **Objetivo**: substituir mocks do dashboard por queries agregadas reais.
 - **Entregas**:
-  - [ ] View ou função SQL para métricas agregadas por workspace (total leads, deals abertos, valor do pipeline, conversion rate).
-  - [ ] Query do funil agrupando deals por `stage`.
-  - [ ] Query de "próximos prazos" filtrando deals com `due_date` próximo do usuário logado.
-  - [ ] Filtro de período aplicado nas queries (server-side).
-  - [ ] Cache adequado (revalidate em mutations).
-  - [ ] Performance: `Promise.all` para queries paralelas no Server Component.
-- **Commit final**: `feat(dashboard): connect metrics to live supabase queries`
+  - [x] `server/dashboard.ts` — `getDashboardData`: totalLeads, openDeals, pipelineValue, conversionRate, funnelData, upcomingDeals.
+  - [x] Funil agrupando deals por `stage` com count e valor total.
+  - [x] Query de "próximos prazos" com `idx_deals_due_date` (partial index).
+  - [x] Filtro de período (7d/30d/90d) aplicado nas queries server-side via `searchParams`.
+  - [x] `Promise.all` para 5 queries paralelas no Server Component.
+  - [x] Variação % vs período anterior (change) em cada KPI.
+- **Commit**: PR #15 (junto com M12)
 
 ---
 
