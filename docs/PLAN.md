@@ -213,21 +213,31 @@ Plano executável dividido em milestones, derivado do briefing técnico em [../C
   - [x] `.env.example` atualizado com as 3 chaves Supabase + Stripe + Resend.
 - **Commits**: PR #12 `feat(db): supabase clients` · PR #13 `feat(db): supabase schema migrations + RLS policies + TS types`
 
-### M11 — Auth & Workspaces (real)
+### M11 — Auth & Workspaces (real) ✅
 
-- **Branch**: `feat/m11-auth-workspaces`
+- **Branch**: `feat/m11-auth-workspaces` → **PR #14** — mergeado em `main`
 - **Objetivo**: substituir auth mockada por Supabase Auth + fluxo de criação de workspace + onboarding + convites por e-mail via Resend.
 - **Entregas**:
-  - [ ] Supabase Auth integrado nas telas de M03 (signup, login, recover).
-  - [ ] Middleware Next.js protegendo rotas `(app)/`.
-  - [ ] Onboarding pós-signup: tela "Crie seu workspace" se usuário não tem nenhum.
-  - [ ] Switch de workspace real (lê de `workspace_members`).
-  - [ ] Aceitar convite via link `/invite/[token]` (cria `workspace_member` se token válido).
-  - [ ] Resend SDK configurado, template de e-mail de convite com branding.
-  - [ ] Server action `inviteMember(email, role)` envia e-mail e cria `workspace_invites`.
-  - [ ] Remoção de membro (admin only).
-  - [ ] Aba Membros em `/settings` conectada ao banco.
-- **Commit final**: `feat(auth): supabase auth, workspaces, invites via resend`
+  - [x] Supabase Auth integrado nas telas de M03 (signup, login, recover).
+  - [x] Middleware Next.js protegendo rotas `(app)/` — refresh de sessão + redirect para `/login`.
+  - [x] PKCE callback `src/app/auth/callback/route.ts` — troca `code` por sessão.
+  - [x] Server actions de auth: `signIn`, `signUp`, `signOut`, `resetPassword`, `updatePassword`.
+  - [x] Onboarding pós-signup: tela "Crie seu workspace" se usuário não tem nenhum.
+  - [x] Onboarding conectado ao banco via `create_workspace` SECURITY DEFINER RPC.
+  - [x] Switch de workspace real (lê de `workspace_members`).
+  - [x] AppLayout com dados reais: workspace + user + role + workspaces em Promise.all.
+  - [x] Botão Sair chama `signOut()` server action.
+  - [x] Pages login/signup/onboarding redirecionam usuários já autenticados.
+  - [x] Migration `0003` — `(select auth.uid())` em todas as RLS policies, `SET search_path=''` em SECURITY DEFINER, FK index em `activities.author_id`.
+  - [x] Migration `0004` — `create_workspace(p_name, p_slug)` SECURITY DEFINER.
+  - [x] Skill `supabase-postgres-best-practices` aplicado: RLS performance, segurança de funções, índices FK.
+  - [ ] Aceitar convite via link `/invite/[token]` — **deferred para próxima iteração**.
+  - [ ] Resend SDK configurado, template de e-mail de convite — **deferred**.
+  - [ ] Server action `inviteMember(email, role)` — **deferred**.
+  - [ ] Remoção de membro (admin only) — **deferred**.
+  - [ ] Aba Membros em `/settings` conectada ao banco — **deferred**.
+- **Nota técnica**: INSERT direto em `workspaces` via PostgREST table API falha com RLS 42501 (bug PG17 + authenticator role). Solução: SECURITY DEFINER RPC que roda como `postgres` (bypassrls=true).
+- **Commit**: PR #14 `feat(auth): supabase auth, workspaces, invites via resend — M11`
 
 ### M12 — Leads, Deals & Activities (persistência)
 
