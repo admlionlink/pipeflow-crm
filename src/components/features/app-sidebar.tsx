@@ -17,9 +17,10 @@ const NAV_ITEMS = [
 
 interface AppSidebarProps {
   workspace: Workspace
+  workspaces: Workspace[]
 }
 
-export function AppSidebar({ workspace }: AppSidebarProps) {
+export function AppSidebar({ workspace, workspaces }: AppSidebarProps) {
   const pathname = usePathname()
 
   return (
@@ -41,7 +42,7 @@ export function AppSidebar({ workspace }: AppSidebarProps) {
 
       {/* Workspace Switcher */}
       <div className="px-2 py-3 border-b border-sidebar-border shrink-0">
-        <WorkspaceSwitcher currentWorkspace={workspace} />
+        <WorkspaceSwitcher currentWorkspace={workspace} workspaces={workspaces} />
       </div>
 
       {/* Navegação principal */}
@@ -69,7 +70,6 @@ export function AppSidebar({ workspace }: AppSidebarProps) {
               />
               {item.label}
 
-              {/* Indicador de rota ativa */}
               {isActive && (
                 <span className="ml-auto h-1.5 w-1.5 rounded-full bg-pf-accent" />
               )}

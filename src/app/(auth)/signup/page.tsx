@@ -1,9 +1,18 @@
+import { redirect } from 'next/navigation'
 import { SignupForm } from '@/components/features/auth/signup-form'
+import { getServerClient } from '@/server/server'
 
 export const metadata = {
   title: 'Criar conta — PipeFlow CRM',
 }
 
-export default function SignupPage() {
+export default async function SignupPage() {
+  const supabase = await getServerClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (user) redirect('/onboarding')
+
   return <SignupForm />
 }

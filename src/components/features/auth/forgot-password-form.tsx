@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { forgotPasswordSchema, type ForgotPasswordInput } from '@/lib/validations/auth'
+import { resetPassword } from '@/server/auth'
 
 export function ForgotPasswordForm() {
   const [isLoading, setIsLoading] = useState(false)
@@ -30,11 +31,16 @@ export function ForgotPasswordForm() {
 
   async function onSubmit(data: ForgotPasswordInput) {
     setIsLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 1200))
+    const result = await resetPassword(data.email)
     setIsLoading(false)
+
+    if (result?.error) {
+      toast.error(result.error)
+      return
+    }
+
     setSentEmail(data.email)
     setSent(true)
-    toast.success('E-mail de recuperação enviado!')
   }
 
   if (sent) {
@@ -79,7 +85,7 @@ export function ForgotPasswordForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form method="post" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="email"

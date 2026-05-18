@@ -275,6 +275,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_workspace: {
+        Args: { p_name: string; p_slug: string }
+        Returns: {
+          id: string
+          name: string
+          slug: string
+          plan: Database['public']['Enums']['plan']
+        }
+      }
       is_workspace_admin: {
         Args: { wid: string }
         Returns: boolean

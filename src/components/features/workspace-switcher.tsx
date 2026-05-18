@@ -13,7 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { MOCK_WORKSPACES } from '@/lib/mocks/workspaces'
 import { type Workspace } from '@/types/workspace'
 
 function getInitials(name: string) {
@@ -27,9 +26,10 @@ function getInitials(name: string) {
 
 interface WorkspaceSwitcherProps {
   currentWorkspace: Workspace
+  workspaces: Workspace[]
 }
 
-export function WorkspaceSwitcher({ currentWorkspace }: WorkspaceSwitcherProps) {
+export function WorkspaceSwitcher({ currentWorkspace, workspaces }: WorkspaceSwitcherProps) {
   const router = useRouter()
 
   return (
@@ -69,7 +69,7 @@ export function WorkspaceSwitcher({ currentWorkspace }: WorkspaceSwitcherProps) 
           Meus workspaces
         </DropdownMenuLabel>
 
-        {MOCK_WORKSPACES.map((ws) => (
+        {workspaces.map((ws) => (
           <DropdownMenuItem
             key={ws.id}
             onClick={() => router.push(`/${ws.slug}/dashboard`)}
@@ -90,7 +90,10 @@ export function WorkspaceSwitcher({ currentWorkspace }: WorkspaceSwitcherProps) 
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem className="gap-2 cursor-pointer text-muted-foreground">
+        <DropdownMenuItem
+          className="gap-2 cursor-pointer text-muted-foreground"
+          onClick={() => router.push('/onboarding')}
+        >
           <Plus className="h-4 w-4" />
           Criar workspace
         </DropdownMenuItem>
