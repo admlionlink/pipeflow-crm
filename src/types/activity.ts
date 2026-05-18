@@ -5,7 +5,7 @@ export interface Activity {
   leadId: string
   type: ActivityType
   title: string
-  description: string
+  description?: string
   authorName: string
   createdAt: string
 }
