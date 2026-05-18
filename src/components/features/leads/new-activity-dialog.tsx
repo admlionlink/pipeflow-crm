@@ -52,10 +52,11 @@ interface NewActivityDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   leadId: string
+  workspaceId: string
   onAdd: (activity: Activity) => void
 }
 
-export function NewActivityDialog({ open, onOpenChange, leadId, onAdd }: NewActivityDialogProps) {
+export function NewActivityDialog({ open, onOpenChange, leadId, workspaceId, onAdd }: NewActivityDialogProps) {
   const [selectedType, setSelectedType] = useState<ActivityType>('call')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -68,24 +69,23 @@ export function NewActivityDialog({ open, onOpenChange, leadId, onAdd }: NewActi
 
   async function onSubmit(data: ActivityFormInput) {
     setIsLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 600))
-
     const extraInfo = data.extra ? ` (${selectedConfig.extraLabel}: ${data.extra})` : ''
-    const newActivity: Activity = {
-      id: `a${Date.now()}`,
-      leadId,
+    const description = (data.description ?? '') + extraInfo || undefined
+
+    const { createActivity } = await import('@/server/activities')
+    const result = await createActivity(workspaceId, leadId, {
       type: selectedType,
       title: data.title,
-      description: (data.description ?? '') + extraInfo,
-      authorName: 'Andrea Rouca',
-      createdAt: new Date().toISOString(),
-    }
+      description,
+    })
 
-    onAdd(newActivity)
+    setIsLoading(false)
+    if (result.error) { toast.error(result.error); return }
+
+    if (result.activity) onAdd(result.activity)
     toast.success('Atividade registrada!')
     form.reset()
     setSelectedType('call')
-    setIsLoading(false)
     onOpenChange(false)
   }
 

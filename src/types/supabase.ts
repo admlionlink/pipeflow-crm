@@ -270,6 +270,28 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          id:         string
+          full_name:  string
+          email:      string
+          updated_at: string
+        }
+        Insert: {
+          id:          string
+          full_name?:  string
+          email?:      string
+          updated_at?: string
+        }
+        Update: {
+          full_name?:  string
+          email?:      string
+          updated_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: 'profiles_id_fkey'; columns: ['id']; referencedRelation: 'users'; referencedColumns: ['id'] },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

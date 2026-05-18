@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
+import { Loader2, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -24,65 +24,91 @@ import {
 } from '@/components/ui/form'
 import { dealSchema, type DealInput } from '@/lib/validations/deal'
 import { DEAL_STAGE_OPTIONS, type Deal, type DealStage } from '@/types/deal'
+import { getBrowserClient } from '@/server/client'
+
+interface LeadOption {
+  id: string
+  name: string
+  company: string | null
+}
 
 interface AddDealDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  workspaceId: string
   deal?: Deal
   defaultStage?: DealStage
-  onSubmit: (data: DealInput) => void
+  onSubmit: (data: DealInput, leadName?: string, leadCompany?: string) => void
 }
 
 export function AddDealDialog({
   open,
   onOpenChange,
+  workspaceId,
   deal,
   defaultStage,
   onSubmit,
 }: AddDealDialogProps) {
   const isEditing = !!deal
+  const [leads, setLeads] = useState<LeadOption[]>([])
+  const [loadingLeads, setLoadingLeads] = useState(false)
 
   const form = useForm<DealInput>({
     resolver: zodResolver(dealSchema),
     defaultValues: {
       title: '',
-      leadName: '',
-      company: '',
+      leadId: '',
       estimatedValue: 0,
       stage: defaultStage ?? 'novo',
-      ownerName: 'Andrea Rouca',
       deadline: '',
       notes: '',
     },
   })
 
+  // Carrega leads reais do workspace ao abrir o dialog
   useEffect(() => {
-    if (open) {
-      if (deal) {
-        form.reset({
-          title: deal.title,
-          leadName: deal.leadName,
-          company: deal.company,
-          estimatedValue: deal.estimatedValue,
-          stage: deal.stage,
-          ownerName: deal.ownerName,
-          deadline: deal.deadline ?? '',
-          notes: deal.notes ?? '',
-        })
-      } else {
-        form.reset({
-          title: '',
-          leadName: '',
-          company: '',
-          estimatedValue: 0,
-          stage: defaultStage ?? 'novo',
-          ownerName: 'Andrea Rouca',
-          deadline: '',
-          notes: '',
-        })
-      }
+    if (!open || !workspaceId) return
+    setLoadingLeads(true)
+    const supabase = getBrowserClient()
+    supabase
+      .from('leads')
+      .select('id, name, company')
+      .eq('workspace_id', workspaceId)
+      .order('name', { ascending: true })
+      .then(({ data }) => {
+        setLeads(data ?? [])
+        setLoadingLeads(false)
+      })
+  }, [open, workspaceId])
+
+  useEffect(() => {
+    if (!open) return
+    if (deal) {
+      form.reset({
+        title: deal.title,
+        leadId: '',           // lead_id não vem no tipo Deal atual; fica vazio na edição
+        estimatedValue: deal.estimatedValue,
+        stage: deal.stage,
+        deadline: deal.deadline ?? '',
+        notes: deal.notes ?? '',
+      })
+    } else {
+      form.reset({
+        title: '',
+        leadId: '',
+        estimatedValue: 0,
+        stage: defaultStage ?? 'novo',
+        deadline: '',
+        notes: '',
+      })
     }
   }, [open, deal, defaultStage, form])
+
+  function handleSubmit(data: DealInput) {
+    const selectedLead = leads.find((l) => l.id === data.leadId)
+    onSubmit(data, selectedLead?.name, selectedLead?.company ?? undefined)
+  }
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -97,51 +123,81 @@ export function AddDealDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-3">
+            {/* Título */}
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Título do negócio</FormLabel>
+                  <FormLabel>Título *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: Sistema ERP, Licenças Pro..." {...field} />
+                    <Input placeholder="Ex: Implementação CRM — Empresa XYZ" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <div className="grid grid-cols-2 gap-3">
-              <FormField
-                control={form.control}
-                name="leadName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nome do contato</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Ex: Ana Paula Silva" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            {/* Lead vinculado — select com dados reais do banco */}
+            <FormField
+              control={form.control}
+              name="leadId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Lead vinculado</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <select
+                        className="flex h-9 w-full appearance-none rounded-md border border-input bg-background px-3 py-1 pr-8 text-sm text-foreground shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        disabled={loadingLeads}
+                        {...field}
+                      >
+                        <option value="">
+                          {loadingLeads ? 'Carregando leads…' : 'Selecione um lead (opcional)'}
+                        </option>
+                        {leads.map((lead) => (
+                          <option key={lead.id} value={lead.id}>
+                            {lead.name}{lead.company ? ` — ${lead.company}` : ''}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute right-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="company"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Empresa</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Nome da empresa" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            {/* Estágio */}
+            <FormField
+              control={form.control}
+              name="stage"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Estágio *</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <select
+                        className="flex h-9 w-full appearance-none rounded-md border border-input bg-background px-3 py-1 pr-8 text-sm text-foreground shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        {...field}
+                      >
+                        {DEAL_STAGE_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute right-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
+            {/* Valor + Prazo */}
             <div className="grid grid-cols-2 gap-3">
               <FormField
                 control={form.control}
@@ -152,7 +208,7 @@ export function AddDealDialog({
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="Ex: 48000"
+                        placeholder="0"
                         min={0}
                         value={field.value === 0 ? '' : field.value}
                         onChange={(e) => {
@@ -163,45 +219,6 @@ export function AddDealDialog({
                         name={field.name}
                         ref={field.ref}
                       />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="stage"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Etapa</FormLabel>
-                    <FormControl>
-                      <select
-                        className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm text-foreground shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                        {...field}
-                      >
-                        {DEAL_STAGE_OPTIONS.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <FormField
-                control={form.control}
-                name="ownerName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Responsável</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Nome do responsável" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -223,6 +240,7 @@ export function AddDealDialog({
               />
             </div>
 
+            {/* Observações */}
             <FormField
               control={form.control}
               name="notes"

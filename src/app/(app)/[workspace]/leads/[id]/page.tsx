@@ -15,8 +15,9 @@ import { Card, CardContent } from '@/components/ui/card'
 import { LeadStatusBadge } from '@/components/features/leads/lead-status-badge'
 import { ActivityTimeline } from '@/components/features/leads/activity-timeline'
 import { LeadDetailActions } from '@/components/features/leads/lead-detail-actions'
-import { MOCK_LEADS } from '@/lib/mocks/leads'
-import { MOCK_ACTIVITIES } from '@/lib/mocks/activities'
+import { getLead } from '@/server/leads'
+import { listActivities } from '@/server/activities'
+import { getServerClient } from '@/server/server'
 
 interface LeadDetailPageProps {
   params: { workspace: string; id: string }
@@ -55,11 +56,26 @@ function InfoRow({
   )
 }
 
-export default function LeadDetailPage({ params }: LeadDetailPageProps) {
-  const lead = MOCK_LEADS.find((l) => l.id === params.id)
+export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
+  const supabase = await getServerClient()
+
+  // Resolve workspace slug → id
+  const { data: workspace } = await supabase
+    .from('workspaces')
+    .select('id')
+    .eq('slug', params.workspace)
+    .single()
+
+  if (!workspace) notFound()
+
+  // §6.2: Promise.all — lead e activities em paralelo
+  const [lead, activities] = await Promise.all([
+    getLead(workspace.id, params.id),
+    listActivities(workspace.id, params.id),
+  ])
+
   if (!lead) notFound()
 
-  const activities = MOCK_ACTIVITIES.filter((a) => a.leadId === lead.id)
   const initials = lead.name
     .split(' ')
     .map((n) => n[0])
@@ -88,7 +104,11 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
           <span className="truncate font-medium max-w-[200px]">{lead.name}</span>
         </nav>
 
-        <LeadDetailActions lead={lead} workspaceSlug={params.workspace} />
+        <LeadDetailActions
+          lead={lead}
+          workspaceSlug={params.workspace}
+          workspaceId={workspace.id}
+        />
       </div>
 
       {/* Layout em duas colunas */}
@@ -97,7 +117,6 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
         <div className="lg:col-span-2">
           <Card>
             <CardContent className="pt-6">
-              {/* Avatar + nome + status centralizados */}
               <div className="flex flex-col items-center pb-6 text-center border-b border-border">
                 <Avatar className="h-20 w-20 mb-4">
                   <AvatarFallback className="bg-primary/10 text-2xl font-bold text-primary">
@@ -110,7 +129,6 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
                 <LeadStatusBadge status={lead.status} className="mt-3" />
               </div>
 
-              {/* Campos de contato */}
               <div className="space-y-3 py-5 border-b border-border">
                 <InfoRow icon={Mail} label="E-mail" value={lead.email} truncate />
                 <InfoRow icon={Phone} label="Telefone" value={lead.phone} />
@@ -127,7 +145,6 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
                 <InfoRow icon={Calendar} label="Criado em" value={createdDate} />
               </div>
 
-              {/* Notas */}
               {lead.notes && (
                 <div className="pt-5">
                   <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -144,7 +161,11 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
         <div className="lg:col-span-3">
           <Card>
             <CardContent className="pt-6">
-              <ActivityTimeline activities={activities} leadId={lead.id} />
+              <ActivityTimeline
+                activities={activities}
+                leadId={lead.id}
+                workspaceId={workspace.id}
+              />
             </CardContent>
           </Card>
         </div>
