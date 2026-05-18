@@ -1,9 +1,27 @@
+import { redirect } from 'next/navigation'
 import { LoginForm } from '@/components/features/auth/login-form'
+import { getServerClient } from '@/server/server'
 
 export const metadata = {
   title: 'Entrar — PipeFlow CRM',
 }
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const supabase = await getServerClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (user) {
+    const { data } = await supabase
+      .from('workspace_members')
+      .select('workspaces(slug)')
+      .limit(1)
+      .single()
+
+    const ws = data?.workspaces as { slug: string } | null
+    redirect(ws?.slug ? `/${ws.slug}/dashboard` : '/onboarding')
+  }
+
   return <LoginForm />
 }

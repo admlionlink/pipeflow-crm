@@ -19,6 +19,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/s
 import { AppSidebar } from '@/components/features/app-sidebar'
 import { type Workspace } from '@/types/workspace'
 import { type User as UserType } from '@/types/user'
+import { signOut } from '@/server/auth'
 
 const SECTION_LABELS: Record<string, string> = {
   dashboard: 'Dashboard',
@@ -39,15 +40,15 @@ function getInitials(name: string) {
 
 interface AppHeaderProps {
   workspace: Workspace
+  workspaces: Workspace[]
   user: UserType
 }
 
-export function AppHeader({ workspace, user }: AppHeaderProps) {
+export function AppHeader({ workspace, workspaces, user }: AppHeaderProps) {
   const { resolvedTheme, setTheme } = useTheme()
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  // Fecha o menu mobile sempre que a rota muda (navegação dentro do Sheet)
   useEffect(() => {
     setMobileOpen(false)
   }, [pathname])
@@ -58,7 +59,7 @@ export function AppHeader({ workspace, user }: AppHeaderProps) {
 
   return (
     <header className="flex h-14 items-center gap-3 border-b border-border px-4 bg-background shrink-0">
-      {/* Hamburger — só no mobile */}
+      {/* Hamburger — mobile only */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon" className="md:hidden shrink-0">
@@ -68,7 +69,7 @@ export function AppHeader({ workspace, user }: AppHeaderProps) {
         </SheetTrigger>
         <SheetContent side="left" className="p-0 w-64">
           <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
-          <AppSidebar workspace={workspace} />
+          <AppSidebar workspace={workspace} workspaces={workspaces} />
         </SheetContent>
       </Sheet>
 
@@ -81,9 +82,8 @@ export function AppHeader({ workspace, user }: AppHeaderProps) {
         <span className="font-medium text-foreground">{sectionLabel}</span>
       </div>
 
-      {/* Ações à direita */}
+      {/* Right actions */}
       <div className="flex items-center gap-1 ml-auto">
-        {/* Busca global — desktop */}
         <div className="relative hidden md:flex items-center mr-1">
           <Search className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
           <Input
@@ -92,14 +92,12 @@ export function AppHeader({ workspace, user }: AppHeaderProps) {
           />
         </div>
 
-        {/* Notificações */}
         <Button variant="ghost" size="icon" className="relative h-8 w-8">
           <Bell className="h-4 w-4" />
           <span className="sr-only">Notificações</span>
           <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
         </Button>
 
-        {/* Avatar com menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
@@ -146,7 +144,10 @@ export function AppHeader({ workspace, user }: AppHeaderProps) {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem className="gap-2 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10">
+            <DropdownMenuItem
+              className="gap-2 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
+              onClick={() => signOut()}
+            >
               <LogOut className="h-4 w-4" />
               Sair
             </DropdownMenuItem>

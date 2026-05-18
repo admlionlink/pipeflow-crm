@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
@@ -18,9 +17,9 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { loginSchema, type LoginInput } from '@/lib/validations/auth'
+import { signIn } from '@/server/auth'
 
 export function LoginForm() {
-  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<LoginInput>({
@@ -28,13 +27,15 @@ export function LoginForm() {
     defaultValues: { email: '', password: '' },
   })
 
-  async function onSubmit() {
+  async function onSubmit(data: LoginInput) {
     setIsLoading(true)
-    // Simulação de chamada ao backend
-    await new Promise((resolve) => setTimeout(resolve, 1200))
+    const result = await signIn(data.email, data.password)
     setIsLoading(false)
-    toast.success('Bem-vindo de volta!')
-    router.push('/agencia-criativa/dashboard')
+
+    if (result?.error) {
+      toast.error(result.error)
+    }
+    // On success, signIn() redirects — no client-side navigation needed
   }
 
   return (
@@ -50,7 +51,7 @@ export function LoginForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form method="post" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="email"

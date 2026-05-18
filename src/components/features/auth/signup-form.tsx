@@ -3,10 +3,9 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Mail } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -19,10 +18,12 @@ import {
 } from '@/components/ui/form'
 import { PasswordStrength } from '@/components/features/auth/password-strength'
 import { signupSchema, type SignupInput } from '@/lib/validations/auth'
+import { signUp } from '@/server/auth'
 
 export function SignupForm() {
-  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+  const [needsConfirmation, setNeedsConfirmation] = useState(false)
+  const [confirmedEmail, setConfirmedEmail] = useState('')
 
   const form = useForm<SignupInput>({
     resolver: zodResolver(signupSchema),
@@ -33,10 +34,45 @@ export function SignupForm() {
 
   async function onSubmit(data: SignupInput) {
     setIsLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 1200))
+    const result = await signUp(data.email, data.password, data.name)
     setIsLoading(false)
-    toast.success(`Bem-vindo, ${data.name}! Agora configure seu workspace.`)
-    router.push('/onboarding')
+
+    if (result?.error) {
+      toast.error(result.error)
+      return
+    }
+
+    if (result?.needsConfirmation) {
+      setConfirmedEmail(data.email)
+      setNeedsConfirmation(true)
+      return
+    }
+    // On success with session, signUp() redirects to /onboarding
+  }
+
+  if (needsConfirmation) {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col items-center gap-4 py-4 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+            <Mail className="h-7 w-7 text-primary" />
+          </div>
+          <div className="space-y-1">
+            <h1 className="text-2xl font-bold tracking-tight">Verifique seu e-mail</h1>
+            <p className="text-sm text-muted-foreground">
+              Enviamos um link de confirmação para{' '}
+              <span className="font-medium text-foreground">{confirmedEmail}</span>
+            </p>
+          </div>
+          <p className="max-w-xs text-xs text-muted-foreground">
+            Clique no link do e-mail para ativar sua conta e acessar o PipeFlow.
+          </p>
+        </div>
+        <Button variant="outline" className="w-full" asChild>
+          <Link href="/login">Ir para o login</Link>
+        </Button>
+      </div>
+    )
   }
 
   return (
@@ -52,7 +88,7 @@ export function SignupForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form method="post" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="name"

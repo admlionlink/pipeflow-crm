@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Loader2, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -18,6 +17,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { onboardingSchema, type OnboardingInput } from '@/lib/validations/auth'
+import { createWorkspace } from '@/server/workspaces'
 
 function toSlug(name: string): string {
   return name
@@ -30,7 +30,6 @@ function toSlug(name: string): string {
 }
 
 export function OnboardingForm() {
-  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<OnboardingInput>({
@@ -43,11 +42,14 @@ export function OnboardingForm() {
 
   async function onSubmit(data: OnboardingInput) {
     setIsLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    const result = await createWorkspace(data.workspaceName)
     setIsLoading(false)
-    toast.success(`Workspace "${data.workspaceName}" criado! Entrando…`)
-    // Mock: redireciona para workspace de demonstração até o backend estar pronto
-    router.push('/agencia-criativa/dashboard')
+
+    if (result?.error) {
+      toast.error(result.error)
+      return
+    }
+    // On success, createWorkspace() redirects to /[slug]/dashboard
   }
 
   return (
@@ -72,7 +74,7 @@ export function OnboardingForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form method="post" onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="workspaceName"
