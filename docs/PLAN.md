@@ -231,13 +231,26 @@ Plano executável dividido em milestones, derivado do briefing técnico em [../C
   - [x] Migration `0003` — `(select auth.uid())` em todas as RLS policies, `SET search_path=''` em SECURITY DEFINER, FK index em `activities.author_id`.
   - [x] Migration `0004` — `create_workspace(p_name, p_slug)` SECURITY DEFINER.
   - [x] Skill `supabase-postgres-best-practices` aplicado: RLS performance, segurança de funções, índices FK.
-  - [ ] Aceitar convite via link `/invite/[token]` — **deferred para próxima iteração**.
-  - [ ] Resend SDK configurado, template de e-mail de convite — **deferred**.
-  - [ ] Server action `inviteMember(email, role)` — **deferred**.
-  - [ ] Remoção de membro (admin only) — **deferred**.
-  - [ ] Aba Membros em `/settings` conectada ao banco — **deferred**.
 - **Nota técnica**: INSERT direto em `workspaces` via PostgREST table API falha com RLS 42501 (bug PG17 + authenticator role). Solução: SECURITY DEFINER RPC que roda como `postgres` (bypassrls=true).
 - **Commit**: PR #14 `feat(auth): supabase auth, workspaces, invites via resend — M11`
+
+### M11.5 — Collaboration & Settings finalization ✅
+
+- **Branch**: `feat/collaboration` → **PR #16** — mergeado em `main`
+- **Objetivo**: completar os itens deferred do M11 (convites, aceitar convite, gestão de membros) e conectar todas as abas de Settings ao banco.
+- **Entregas**:
+  - [x] `inviteMember`: gera token, insere em `workspace_invites`, envia e-mail via Resend (template HTML com logo + CTA âmbar).
+  - [x] `/invite/[token]`: landing page de convite (sem auth) com opções Entrar / Criar conta; aceita automaticamente quando autenticado.
+  - [x] `accept_invite` SECURITY DEFINER RPC (migration `0006`) — mesmo padrão do `create_workspace`; valida token, e-mail, limite Free e insere membro em transação atômica.
+  - [x] `changeRole`: admin pode alterar papel (Admin ↔ Membro) de qualquer membro via Select inline.
+  - [x] `removeMember`: remoção de membro com proteção contra auto-remoção.
+  - [x] Banner de limite Free com ícone `AlertCircle` + título em destaque (cores amber do projeto).
+  - [x] Aba Membros conectada ao banco: `listMembers` (anti-N+1 via Promise.all), Select de papel, remover.
+  - [x] Aba Workspace: `updateWorkspace` (nome/slug + redirect se slug mudou), `deleteWorkspace`.
+  - [x] Aba Perfil: `updateProfile` (nome), `updatePassword`.
+  - [x] Login/signup com parâmetro `?next=` para redirect pós-auth (fluxo de convite).
+  - [x] `shadcn/Select` reescrito com `@radix-ui/react-select` (consistente com o projeto).
+- **Commit**: PR #16 `feat(collaboration): convites, aceitar convite, gestão de membros e settings reais`
 
 ### M12 — Leads, Deals & Activities (persistência) ✅
 
@@ -330,12 +343,13 @@ Plano executável dividido em milestones, derivado do briefing técnico em [../C
 | 2 | M09 | `feat/m09-settings-ui` | Settings UI |
 | 3 | M10 | `feat/m10-supabase-schema` | Supabase Schema |
 | 3 | M11 | `feat/m11-auth-workspaces` | Auth + Workspaces |
-| 3 | M12 | `feat/m12-domain-persistence` | Domain Persistence |
-| 3 | M13 | `feat/m13-dashboard-real` | Dashboard Real |
+| 3 | M11.5 | `feat/collaboration` | Collaboration & Settings |
+| 3 | M12 | `feat/leads-data` | Domain Persistence |
+| 3 | M13 | `feat/leads-data` | Dashboard Real |
 | 4 | M14 | `feat/m14-stripe` | Stripe |
 | 4 | M15 | `feat/m15-polish-and-deploy` | Deploy |
 
-**Total**: 15 milestones, 15 branches, 15 PRs.
+**Total**: 16 milestones, 16 branches, 16 PRs.
 
 ## Pós-MVP (fora deste plano)
 
