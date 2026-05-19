@@ -37,6 +37,7 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
     .from('workspace_members')
     .select('role')
     .eq('workspace_id', workspace.id)
+    .eq('user_id', authUser.id)
     .single()
 
   if (!membership) notFound()

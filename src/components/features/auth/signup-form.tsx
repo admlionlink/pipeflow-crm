@@ -20,7 +20,11 @@ import { PasswordStrength } from '@/components/features/auth/password-strength'
 import { signupSchema, type SignupInput } from '@/lib/validations/auth'
 import { signUp } from '@/server/auth'
 
-export function SignupForm() {
+interface SignupFormProps {
+  next?: string
+}
+
+export function SignupForm({ next }: SignupFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [needsConfirmation, setNeedsConfirmation] = useState(false)
   const [confirmedEmail, setConfirmedEmail] = useState('')
@@ -34,7 +38,7 @@ export function SignupForm() {
 
   async function onSubmit(data: SignupInput) {
     setIsLoading(true)
-    const result = await signUp(data.email, data.password, data.name)
+    const result = await signUp(data.email, data.password, data.name, next)
     setIsLoading(false)
 
     if (result?.error) {

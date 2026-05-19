@@ -6,13 +6,20 @@ export const metadata = {
   title: 'Criar conta — PipeFlow CRM',
 }
 
-export default async function SignupPage() {
+interface SignupPageProps {
+  searchParams: { next?: string }
+}
+
+export default async function SignupPage({ searchParams }: SignupPageProps) {
   const supabase = await getServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (user) redirect('/onboarding')
+  if (user) {
+    if (searchParams.next) redirect(searchParams.next)
+    redirect('/onboarding')
+  }
 
-  return <SignupForm />
+  return <SignupForm next={searchParams.next} />
 }

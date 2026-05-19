@@ -20,10 +20,11 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
+  FormLabel,  // usado em FormField de e-mail
   FormMessage,
 } from '@/components/ui/form'
 import { cn } from '@/lib/utils'
+import { inviteMember } from '@/server/members'
 import { type MemberRole } from '@/types/workspace'
 
 const inviteSchema = z.object({
@@ -35,9 +36,14 @@ type InviteFormInput = z.infer<typeof inviteSchema>
 interface InviteMemberDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  workspaceId: string
+  workspaceName: string
+  onSuccess: () => void
 }
 
-export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogProps) {
+export function InviteMemberDialog({
+  open, onOpenChange, workspaceId, workspaceName, onSuccess,
+}: InviteMemberDialogProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [selectedRole, setSelectedRole] = useState<MemberRole>('member')
 
@@ -48,12 +54,18 @@ export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogPro
 
   async function onSubmit(data: InviteFormInput) {
     setIsLoading(true)
-    await new Promise((r) => setTimeout(r, 1000))
+    const result = await inviteMember(workspaceId, workspaceName, data.email, selectedRole)
     setIsLoading(false)
+
+    if (result.error) {
+      toast.error(result.error)
+      return
+    }
+
     toast.success(`Convite enviado para ${data.email}`)
     form.reset()
     setSelectedRole('member')
-    onOpenChange(false)
+    onSuccess()
   }
 
   return (
@@ -64,7 +76,7 @@ export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogPro
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form method="post" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="email"
@@ -85,7 +97,7 @@ export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogPro
             />
 
             <div className="space-y-2">
-              <FormLabel>Papel</FormLabel>
+              <label className="text-sm font-medium leading-none">Papel</label>
               <div className="grid grid-cols-2 gap-2">
                 {(['member', 'admin'] as MemberRole[]).map((role) => (
                   <button
@@ -99,7 +111,7 @@ export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogPro
                         : 'border-border hover:bg-muted/50',
                     )}
                   >
-                    <p className="text-sm font-medium capitalize">
+                    <p className="text-sm font-medium">
                       {role === 'admin' ? 'Admin' : 'Membro'}
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -111,7 +123,12 @@ export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogPro
             </div>
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                disabled={isLoading}
+              >
                 Cancelar
               </Button>
               <Button type="submit" disabled={isLoading}>
