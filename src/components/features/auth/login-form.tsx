@@ -19,7 +19,11 @@ import {
 import { loginSchema, type LoginInput } from '@/lib/validations/auth'
 import { signIn } from '@/server/auth'
 
-export function LoginForm() {
+interface LoginFormProps {
+  next?: string
+}
+
+export function LoginForm({ next }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<LoginInput>({
@@ -29,7 +33,7 @@ export function LoginForm() {
 
   async function onSubmit(data: LoginInput) {
     setIsLoading(true)
-    const result = await signIn(data.email, data.password)
+    const result = await signIn(data.email, data.password, next)
     setIsLoading(false)
 
     if (result?.error) {

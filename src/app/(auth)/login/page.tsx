@@ -6,13 +6,20 @@ export const metadata = {
   title: 'Entrar — PipeFlow CRM',
 }
 
-export default async function LoginPage() {
+interface LoginPageProps {
+  searchParams: { next?: string }
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
   const supabase = await getServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
   if (user) {
+    // Se há um destino pendente (ex: aceitar convite), redirecionar para lá
+    if (searchParams.next) redirect(searchParams.next)
+
     const { data } = await supabase
       .from('workspace_members')
       .select('workspaces(slug)')
@@ -23,5 +30,5 @@ export default async function LoginPage() {
     redirect(ws?.slug ? `/${ws.slug}/dashboard` : '/onboarding')
   }
 
-  return <LoginForm />
+  return <LoginForm next={searchParams.next} />
 }

@@ -1,16 +1,46 @@
-'use client'
-
+import { notFound } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { WorkspaceTab } from '@/components/features/settings/workspace-tab'
 import { MembersTab } from '@/components/features/settings/members-tab'
 import { PlanTab } from '@/components/features/settings/plan-tab'
 import { ProfileTab } from '@/components/features/settings/profile-tab'
-import { MOCK_WORKSPACES } from '@/lib/mocks/workspaces'
+import { getServerClient } from '@/server/server'
+import { listMembers } from '@/server/members'
 
-// Workspace ativo mockado (seria derivado do parâmetro de rota + auth)
-const ACTIVE_WORKSPACE = MOCK_WORKSPACES[0]
+interface SettingsPageProps {
+  params: { workspace: string }
+}
 
-export default function SettingsPage() {
+export default async function SettingsPage({ params }: SettingsPageProps) {
+  const supabase = await getServerClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
+
+  // 1. Buscar workspace (necessário para o id usado nas demais queries)
+  const { data: workspace } = await supabase
+    .from('workspaces')
+    .select('id, name, slug, plan')
+    .eq('slug', params.workspace)
+    .single()
+
+  if (!workspace) notFound()
+
+  // 2. Demais dados em paralelo com o workspace.id já disponível (§6.2 Promise.all)
+  const [members, profileResult, membershipResult] = await Promise.all([
+    listMembers(workspace.id),
+    supabase.from('profiles').select('full_name, email').eq('id', user.id).single(),
+    supabase
+      .from('workspace_members')
+      .select('role')
+      .eq('workspace_id', workspace.id)
+      .eq('user_id', user.id)
+      .single(),
+  ])
+
+  const profile = profileResult.data
+  const isAdmin = membershipResult.data?.role === 'admin'
+
   return (
     <div className="space-y-6">
       <div>
@@ -30,19 +60,29 @@ export default function SettingsPage() {
 
         <div className="mt-6">
           <TabsContent value="workspace">
-            <WorkspaceTab workspace={ACTIVE_WORKSPACE} />
+            <WorkspaceTab workspace={workspace} isAdmin={isAdmin} />
           </TabsContent>
 
           <TabsContent value="membros">
-            <MembersTab plan={ACTIVE_WORKSPACE.plan} />
+            <MembersTab
+              workspaceId={workspace.id}
+              workspaceName={workspace.name}
+              plan={workspace.plan}
+              initialMembers={members}
+              currentUserId={user.id}
+              isAdmin={isAdmin}
+            />
           </TabsContent>
 
           <TabsContent value="plano">
-            <PlanTab plan={ACTIVE_WORKSPACE.plan} />
+            <PlanTab plan={workspace.plan} memberCount={members.length} />
           </TabsContent>
 
           <TabsContent value="perfil">
-            <ProfileTab />
+            <ProfileTab
+              initialName={profile?.full_name ?? ''}
+              initialEmail={profile?.email ?? user.email ?? ''}
+            />
           </TabsContent>
         </div>
       </Tabs>

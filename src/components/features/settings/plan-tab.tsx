@@ -4,8 +4,6 @@ import Link from 'next/link'
 import { Zap, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { MOCK_MEMBERS } from '@/lib/mocks/members'
-import { MOCK_LEADS } from '@/lib/mocks/leads'
 import { type Plan } from '@/types/workspace'
 
 const LIMITS = {
@@ -42,11 +40,12 @@ function UsageBar({ label, current, max, warn }: UsageBarProps) {
 
 interface PlanTabProps {
   plan: Plan
+  memberCount: number
 }
 
-export function PlanTab({ plan }: PlanTabProps) {
-  const membersCount = MOCK_MEMBERS.length
-  const leadsCount = MOCK_LEADS.length
+export function PlanTab({ plan, memberCount }: PlanTabProps) {
+  const membersCount = memberCount
+  const leadsCount = 0  // Leads count via M14 (Stripe enforcement)
   const limits = LIMITS[plan]
 
   const membersPct = plan === 'free' ? (membersCount / limits.members) * 100 : 0

@@ -8,18 +8,22 @@ function mapAuthError(message: string): string {
   if (message.includes('Email not confirmed')) return 'Confirme seu e-mail antes de entrar.'
   if (message.includes('User already registered')) return 'Já existe uma conta com este e-mail.'
   if (message.includes('Password should be at least')) return 'A senha deve ter pelo menos 6 caracteres.'
-  if (message.includes('rate limit')) return 'Muitas tentativas. Aguarde alguns minutos.'
+  if (message.includes('rate limit') || message.includes('security purposes')) return 'Limite de tentativas atingido. Aguarde alguns minutos e tente novamente.'
   return 'Algo deu errado. Tente novamente.'
 }
 
 export async function signIn(
   email: string,
-  password: string
+  password: string,
+  next?: string,
 ): Promise<{ error: string } | undefined> {
   const supabase = await getServerClient()
 
   const { error } = await supabase.auth.signInWithPassword({ email, password })
   if (error) return { error: mapAuthError(error.message) }
+
+  // Se há um destino explícito (ex: aceitar convite), redirecionar para lá
+  if (next) redirect(next)
 
   const { data } = await supabase
     .from('workspace_members')
@@ -34,14 +38,24 @@ export async function signIn(
 export async function signUp(
   email: string,
   password: string,
-  name: string
+  name: string,
+  next?: string,
 ): Promise<{ error: string; needsConfirmation?: never } | { needsConfirmation: true; error?: never } | undefined> {
   const supabase = await getServerClient()
+
+  // Passa o next (ex: /invite/TOKEN) para o link de confirmação de e-mail.
+  // O callback lê o parâmetro next e redireciona para lá após confirmar.
+  const emailRedirectTo = next
+    ? `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=${encodeURIComponent(next)}`
+    : undefined
 
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { full_name: name } },
+    options: {
+      data: { full_name: name },
+      ...(emailRedirectTo ? { emailRedirectTo } : {}),
+    },
   })
 
   if (error) return { error: mapAuthError(error.message) }
@@ -51,7 +65,7 @@ export async function signUp(
     return { needsConfirmation: true }
   }
 
-  redirect('/onboarding')
+  redirect(next ?? '/onboarding')
 }
 
 export async function signOut(): Promise<void> {

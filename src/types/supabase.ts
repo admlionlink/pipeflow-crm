@@ -297,6 +297,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_invite: {
+        Args: { p_token: string }
+        Returns: {
+          workspace_id: string
+          role?: string
+          already_member?: boolean
+        }
+      }
       create_workspace: {
         Args: { p_name: string; p_slug: string }
         Returns: {

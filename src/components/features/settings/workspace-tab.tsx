@@ -9,40 +9,28 @@ import { Loader2, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+  Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 } from '@/components/ui/form'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+  Dialog, DialogContent, DialogDescription, DialogFooter,
+  DialogHeader, DialogTitle,
 } from '@/components/ui/dialog'
+import { updateWorkspace, deleteWorkspace } from '@/server/settings'
 import { type Workspace } from '@/types/workspace'
 
 const workspaceSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres').max(50),
-  slug: z
-    .string()
-    .min(2, 'Slug deve ter pelo menos 2 caracteres')
-    .max(50)
-    .regex(/^[a-z0-9-]+$/, 'Apenas letras minúsculas, números e hífens'),
+  slug: z.string().min(2).max(50).regex(/^[a-z0-9-]+$/, 'Apenas letras minúsculas, números e hífens'),
 })
 
 type WorkspaceFormInput = z.infer<typeof workspaceSchema>
 
 interface WorkspaceTabProps {
   workspace: Workspace
+  isAdmin: boolean
 }
 
-export function WorkspaceTab({ workspace }: WorkspaceTabProps) {
-  const [isSaving, setIsSaving] = useState(false)
+export function WorkspaceTab({ workspace, isAdmin }: WorkspaceTabProps) {
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
@@ -51,28 +39,27 @@ export function WorkspaceTab({ workspace }: WorkspaceTabProps) {
     defaultValues: { name: workspace.name, slug: workspace.slug },
   })
 
-  async function onSubmit() {
-    setIsSaving(true)
-    await new Promise((r) => setTimeout(r, 1000))
-    setIsSaving(false)
-    toast.success('Workspace atualizado!')
+  async function onSubmit(data: WorkspaceFormInput) {
+    const result = await updateWorkspace(workspace.id, workspace.slug, data)
+    if (result?.error) {
+      toast.error(result.error)
+    } else {
+      toast.success('Workspace atualizado!')
+    }
   }
 
   async function handleDelete() {
     setIsDeleting(true)
-    await new Promise((r) => setTimeout(r, 1200))
-    setIsDeleting(false)
-    setDeleteOpen(false)
-    toast.error('Workspace excluído (simulação)')
+    await deleteWorkspace(workspace.id)
+    // deleteWorkspace redireciona para /onboarding — nunca retorna
   }
 
   return (
     <div className="space-y-8">
-      {/* Formulário de informações */}
       <div>
         <h3 className="mb-4 text-sm font-semibold">Informações do Workspace</h3>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-w-md">
+          <form method="post" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-w-md">
             <FormField
               control={form.control}
               name="name"
@@ -80,7 +67,11 @@ export function WorkspaceTab({ workspace }: WorkspaceTabProps) {
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input placeholder="Minha Empresa" disabled={isSaving} {...field} />
+                    <Input
+                      placeholder="Minha Empresa"
+                      disabled={!isAdmin || form.formState.isSubmitting}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -100,9 +91,11 @@ export function WorkspaceTab({ workspace }: WorkspaceTabProps) {
                       <Input
                         className="border-0 rounded-l-none focus-visible:ring-0"
                         placeholder="minha-empresa"
-                        disabled={isSaving}
+                        disabled={!isAdmin || form.formState.isSubmitting}
                         {...field}
-                        onChange={(e) => field.onChange(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
+                        onChange={(e) =>
+                          field.onChange(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))
+                        }
                       />
                     </div>
                   </FormControl>
@@ -110,33 +103,36 @@ export function WorkspaceTab({ workspace }: WorkspaceTabProps) {
                 </FormItem>
               )}
             />
-            <Button type="submit" size="sm" disabled={isSaving}>
-              {isSaving && <Loader2 className="animate-spin" />}
-              {isSaving ? 'Salvando…' : 'Salvar alterações'}
-            </Button>
+            {isAdmin && (
+              <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting && <Loader2 className="animate-spin" />}
+                {form.formState.isSubmitting ? 'Salvando…' : 'Salvar alterações'}
+              </Button>
+            )}
           </form>
         </Form>
       </div>
 
-      {/* Zona de perigo */}
-      <div className="rounded-lg border border-destructive/40 p-4">
-        <h3 className="mb-1 text-sm font-semibold text-destructive">Zona de perigo</h3>
-        <p className="mb-4 text-sm text-muted-foreground">
-          Excluir o workspace removerá permanentemente todos os dados, leads e negócios. Esta ação não pode ser desfeita.
-        </p>
-        <Button variant="destructive" size="sm" onClick={() => setDeleteOpen(true)}>
-          <Trash2 className="h-3.5 w-3.5" />
-          Excluir workspace
-        </Button>
-      </div>
+      {isAdmin && (
+        <div className="rounded-lg border border-destructive/40 p-4">
+          <h3 className="mb-1 text-sm font-semibold text-destructive">Zona de perigo</h3>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Excluir o workspace removerá permanentemente todos os dados, leads e negócios.
+          </p>
+          <Button variant="destructive" size="sm" onClick={() => setDeleteOpen(true)}>
+            <Trash2 className="h-3.5 w-3.5" />
+            Excluir workspace
+          </Button>
+        </div>
+      )}
 
-      {/* Dialog de confirmação */}
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Excluir workspace</DialogTitle>
             <DialogDescription>
-              Tem certeza? Todos os dados de <strong>{workspace.name}</strong> serão excluídos permanentemente.
+              Tem certeza? Todos os dados de <strong>{workspace.name}</strong> serão excluídos
+              permanentemente. Esta ação não pode ser desfeita.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
